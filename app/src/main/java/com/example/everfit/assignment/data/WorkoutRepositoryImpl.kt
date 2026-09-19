@@ -51,7 +51,10 @@ class WorkoutRepositoryImpl(
             is Result.Success -> {
                 // Writes workout_assignments ONLY. completion_overrides is never
                 // touched here, which is what stops a refresh reverting a local
-                // mark (rung 5.5).
+                // mark (rung 5.5) — and, deliberately, means an override
+                // outlives every later refresh. See resolveCompletion's KDoc for
+                // why that permanence was chosen over releasing the override
+                // once the server agrees.
                 workoutDao.replaceAssignments(fetched.data.map { it.toEntity() })
                 Result.Success(Unit)
             }

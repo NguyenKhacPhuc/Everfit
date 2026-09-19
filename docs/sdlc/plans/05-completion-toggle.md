@@ -80,6 +80,23 @@ the server has caught up with. Keeps the table from growing forever and means
 
 This is the one genuinely open design question in this intent.
 
+> **DECIDED 2026-09-20: option A**, reversing the recommendation above, on a
+> point the drill got wrong. B was described as the tidier choice, but it does
+> not resolve anything: where local and server *disagree* — the only case that
+> matters — B behaves identically to A. It merely garbage-collects overrides
+> that have become redundant, and releases the lock so a later server change is
+> respected again.
+>
+> Neither option makes the app agree with the backend, because the API is
+> read-only and the toggle is never pushed. A local mark is a client-side fact
+> by construction, which is what the brief asks for ("toggle … locally").
+>
+> Accepted cost: the override table only grows, and a genuine later server
+> change is invisible for any workout the user has touched. Recorded in
+> `resolveCompletion`'s KDoc. `CompletionDao.delete` is consequently unused —
+> kept because it is the natural counterpart to `upsert` and is what option B
+> would need.
+
 ## 7. Affects
 
 Depends on Intent 03's storage choice. Under the DataStore fallback, the
