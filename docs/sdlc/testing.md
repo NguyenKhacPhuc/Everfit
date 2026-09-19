@@ -171,7 +171,8 @@ by the API and the obvious guess is wrong:
 - day 2 and day 5 empty; **day 4 holds two**
 - `_id` → `id`, `total_exercise` → `totalExercise`
 - unknown JSON fields are ignored, not fatal
-- malformed body surfaces `DataError.Parsing`, never a raw exception
+- a malformed body surfaces as a `Result.Error`, never a raw exception
+  (code `ApiError.UNKNOWN` — the shared `toResult()` has no parsing branch)
 
 **`WorkoutRepositoryImpl`** — where the two hard requirements live:
 
@@ -179,7 +180,7 @@ by the API and the obvious guess is wrong:
 |---|---|
 | Warm start emits cache first | cached content arrives **before** the network call completes (rung 3.3) |
 | Cold start | empty → content after refresh |
-| Refresh failure is non-destructive | cached content still emitted; `DataError` returned; nothing cleared (rung 3.4) |
+| Refresh failure is non-destructive | cached content still emitted; `Result.Error` returned; nothing cleared (rung 3.4) |
 | Toggle writes only the override table | `workout_assignments` byte-identical after a toggle |
 | **Refresh preserves overrides** | mark complete → refresh returns `status=ASSIGNED` → still reads as completed (rung 5.5) |
 | Toggle targets one id | two assignments on day 4; only the tapped one changes (rung 5.2) |

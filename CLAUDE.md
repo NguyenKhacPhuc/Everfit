@@ -65,7 +65,7 @@ Scope and rationale: [`docs/sdlc/WORKFLOW.md`](docs/sdlc/WORKFLOW.md).
 
 ## Architecture rules
 
-Layered MVVM with the Clean Architecture dependency rule. Dependencies point
+Layered MVI with the Clean Architecture dependency rule. Dependencies point
 inward: `ui -> domain <- data`.
 
 - **`core/` must not import `data/`, `feature/` or `di/`.** Everything depends on
@@ -139,7 +139,7 @@ Store pattern follows `/Users/phucnguyen/Documents/mvi-search` — read
   `remember`.
 - UI events are a sealed interface, so a new interaction fails to compile until
   handled.
-- Colours, spacing and type come from `ui/theme`. **No inline hex, dp or sp
+- Colours, spacing and type come from `core/ui/theme`. **No inline hex, dp or sp
   literals in composables** — if a token is missing, add it to the theme.
 - Status colours are semantic tokens on `LocalEverfitColors`, never Material
   `ColorScheme` slots.

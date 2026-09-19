@@ -14,8 +14,8 @@ the intent, the spec, the plan and the diff together form the audit trail.
 |---|---|---|
 | 1. Plan | ✅ Complete | [`intent.md`](intent.md) + [`intents/`](intents/) |
 | 2. Design | ✅ Complete | [`spec.md`](spec.md), [`testing.md`](testing.md) |
-| 3. Build | Awaiting drill approval | [`plans/`](plans/), `CLAUDE.md` |
-| 4. Test | Not started | Single-command gate, on-device verification |
+| 3. Build | ✅ Complete | [`plans/`](plans/), `CLAUDE.md` |
+| 4. Test | ✅ Complete | Single-command gate, on-device verification |
 | 5. Deploy | **Dropped** | Deliberate — see below |
 | 6. Maintain | **Dropped** | Deliberate — see below |
 

@@ -99,57 +99,45 @@ The gate exists for the moment when continuing feels faster than asking.
 
 ## Status
 
-Stages 1 (Plan) and 2 (Design) complete. Stage 3 in progress.
-
-**Intent 00 done.** Compose + Koin + Ktor + Room wired, design-system tokens in
-place, gate proven to fail (exit 1 on a broken test), app verified launching on
-`emulator-5554`.
-
-**Intents 03–05 done.** Room cache, MVI store, workout cards, Koin wiring.
-Verified on `emulator-5554` against the real endpoint: the week renders to the
-design, a tap marks a workout complete, and the mark **survives an app restart
-during which a refresh reported the opposite status** — rungs 5.4 and 5.5
-demonstrated end to end.
-
-**53 JVM tests green.**
-
-**Intent 02 done.** DTOs, two-step status model, Ktor with typed `DataError`,
-repository boundary declared. **34 JVM tests green.**
-
-**Intent 01 done.** `WeekProvider` (10 tests, written red-first) plus the
-Mon–Sun grid with today highlighted, verified on device against the real date.
-**14 JVM tests green.**
-
-Design exports received. Layout assumption **confirmed** (seven rows). Tokens
-applied from `training.png`. Status enum **corrected**: `0=ASSIGNED, 1=MISSED,
-2=COMPLETED` — the prior assumption had 1 and 2 reversed.
+**Stages 1–4 complete.** The app builds, runs against the live endpoint, and is
+verified on device. 58 JVM unit tests; no instrumented suite by decision
+(see [`testing.md`](testing.md)).
 
 | Intent | Drill | Rungs |
 |---|---|---|
-| 00 Foundation | ✅ APPROVED | **0.1–0.6 ✅ complete** |
-| 01 Week grid | ✅ APPROVED | **1.1–1.4 ✅ complete** |
-| 02 Data layer | ✅ APPROVED | **2.1–2.5 ✅ complete** |
-| 03 Local cache | ✅ APPROVED | **3.1–3.5 ✅** (3.1 verified on device; no instrumented suite) |
-| 04 Cell UI | ✅ APPROVED | **4.1–4.5 ✅ complete** |
-| 05 Toggle | ✅ APPROVED | **5.1–5.6 ✅** (verified on device) |
-| 06 Submission | ✅ APPROVED | **6.1–6.4 ✅** · 6.5 repo public, 6.6 video outstanding |
-| 07 First-load feedback | ✅ APPROVED (option E) | **7.1–7.5 ✅ complete** |
+| 00 Foundation | ✅ approved | ✅ 0.1–0.6 |
+| 01 Week grid | ✅ approved | ✅ 1.1–1.4 |
+| 02 Data layer | ✅ approved | ✅ 2.1–2.5 |
+| 03 Local cache | ✅ approved | ✅ 3.1–3.5 (3.1 verified on device) |
+| 04 Cell UI | ✅ approved | ✅ 4.1–4.5 |
+| 05 Toggle | ✅ approved | ✅ 5.1–5.6 |
+| 06 Submission | ✅ approved | ✅ 6.1–6.5 · ⬜ 6.6 video |
+| 07 First-load feedback | ✅ approved (option E) | ✅ 7.1–7.5 |
 
-**All seven drills APPROVED 2026-09-19. Deadline **2026-09-20 10:44 +07**.**
+### Verified on device, not only in tests
 
-**Next: submission.** `main` still holds only the scaffold, the repo is private, and the video is outstanding.
+- The week renders to the design against the live endpoint.
+- A tap marks a workout complete, and **the mark survives an app restart during
+  which a refresh reports the opposite status** — rungs 5.4 and 5.5 end to end.
+- Offline, cached content stays on screen with a message rather than an error
+  page — rung 3.4, demonstrated by a real DNS outage on the emulator.
+- Cold start shows shimmering placeholders and crossfades to content; a warm
+  start shows none, because the cache answers before the 150ms gate opens.
 
-**No blockers.** Design exports are in `docs/design/`; both open questions are
-resolved.
+### Decisions taken during the build
 
-Remaining design detail to honour in Intent 04, read off `training.png`:
+- **Status enum corrected** from the design: `0=ASSIGNED, 1=MISSED, 2=COMPLETED`.
+  The intuitive reading has 1 and 2 reversed, and the fixture has three `status=1`
+  items to one `status=2`, so guessing would have made the common case wrong.
+- **Layout confirmed** as seven rows, not seven columns.
+- **Room kept**: KSP did clash with AGP 9, but the documented
+  `android.disallowKotlinSourceSets=false` flag fixed it in about ten minutes,
+  so Drill 03's DataStore fallback never triggered.
+- **Type scale taken from the Figma spec** and checked by measuring glyph ink
+  against the export, not by eye.
 
-| Display state | Card | Text |
-|---|---|---|
-| Completed | accent `#7470EF` fill | white title, "Completed", white check right, **no exercise count** |
-| Missed | card `#F7F8FC` | dark title, red "Missed • N exercises" |
-| Assigned (today) | card `#F7F8FC` | dark title, "N exercises", **no status word** |
-| Upcoming (future) | card `#F7F8FC` | grey title *and* grey count |
+### Remaining
 
-> Update this table when a rung lands. It is the only place status lives — an
-> agent should not have to open seven files to learn what is next.
+1. **Record the 3–5 minute video** (rung 6.6) and replace the `TODO` link in
+   [`../../README.md`](../../README.md).
+2. Optional: a type spec for the card subtitle, currently inferred at 14sp/400.

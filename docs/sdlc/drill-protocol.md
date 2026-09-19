@@ -70,7 +70,9 @@ non-blocking is how a deadline is lost.
 
 ## After approval
 
-Drills live in `docs/sdlc/plans/NN-<intent>.md` and carry a status header:
+Drills live in `docs/sdlc/plans/NN-<intent>.md` (see
+[`plans/README.md`](plans/README.md) — they are dated records and are not
+rewritten as the code moves) and carry a status header:
 **DRAFT — awaiting approval**, then **APPROVED** with the date. They are
 written up front, as a set, so the whole board can be prioritised against real
 estimates rather than one intent at a time. They always retain the **rejected

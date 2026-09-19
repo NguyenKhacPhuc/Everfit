@@ -41,15 +41,15 @@ restating it — that is what stops the two drifting.
 
 | Contract | File | Rule in |
 |---|---|---|
-| MVI store, `flatMapFirst` | `mvi/` — adopted from `mvi-search`, not reinvented | §2.8 |
-| Screen contract (State, Intent, Effect) | `ui/calendar/CalendarContract.kt` | §5.1 |
-| Results + reducer | `ui/calendar/CalendarReducer.kt` | §4.2, §5.2 |
-| Repository boundary | `domain/WorkoutRepository.kt` | §2.3 |
-| Error taxonomy | `data/DataError.kt` | §2.7 |
+| MVI store, `flatMapFirst` | `core/mvi/` — adopted from `mvi-search`, not reinvented | §2.8 |
+| Screen contract (State, Intent, Effect) | `feature/calendar/CalendarContract.kt` | §5.1 |
+| Results + reducer | `feature/calendar/CalendarReducer.kt` | §4.2, §5.2 |
+| Repository boundary | `core/domain/WorkoutRepository.kt` | §2.3 |
+| Outcome type | `core/model/Result.kt` (no imports); builders in `data/base/ResultExt.kt` | §2.7 |
 | Persisted shape | `data/local/entity/` | §3.2 |
-| Week rule | `domain/WeekProvider.kt` | §4.1 |
-| Design tokens | `ui/theme/` — `EverfitTheme` wraps `MaterialTheme` | §2.8 |
-| Status rule | `domain/StatusResolver.kt` | §4.2 |
+| Week rule | `core/domain/WeekProvider.kt` | §4.1 |
+| Design tokens | `core/ui/theme/` — `EverfitTheme` wraps `MaterialTheme` | §2.8 |
+| Status rule | `core/domain/StatusResolver.kt` | §4.2 |
 
 ## 1. Technology choices
 
@@ -147,8 +147,8 @@ no Ktor, not even `Context`. That is what makes the JVM-only test story real.
 
 `WorkoutRepository` is declared in `domain` and implemented in `data`, so the
 arrow points inward at the boundary that would otherwise invert. Three methods:
-observe the week as a `Flow`, refresh (returning success or `DataError`), and
-toggle a completion by id.
+observe the week as a `Flow`, refresh (returning `Result.Success` or
+`Result.Error`), and toggle a completion by id.
 
 ### 2.4 The model chain
 
@@ -173,7 +173,7 @@ The cost of collapsing each adjacent pair:
 | Domain = UI | `DisplayStatus` depends on *today*, so the model would mean different things at different times |
 
 Mapping is one-directional, at the boundary it crosses: `data/mapper` owns
-DTO→Entity→Domain, `ui/mapper` owns Domain→UI.
+DTO→Entity→Domain, `feature/mapper` owns Domain→UI.
 
 ### 2.5 Dependency injection
 
@@ -225,17 +225,24 @@ error. Mitigated by a `verify()` test (see `testing.md`).
 
 ### 2.7 Error model
 
-Typed at the boundary, not thrown across it. `DataError` cases:
+Typed at the boundary, not thrown across it. A failure becomes a
+`Result.Error(code, message)`; the code is an HTTP status where there was one,
+otherwise an `ApiError` constant:
 
-| Case | Means |
+| Code | Means |
 |---|---|
-| `Network` | No connectivity, timeout |
-| `Server` | Non-2xx |
-| `Parsing` | Malformed body |
-| `Unknown` | Anything else, carrying the cause |
+| HTTP status (e.g. `500`) | Reached the server, which refused |
+| `ApiError.NETWORK` | No connectivity, DNS failure, TLS, timeout |
+| `ApiError.SERVER` | Connection refused |
+| `ApiError.UNKNOWN` | Anything else, including an unparseable body |
 
-Ktor and serialization exceptions are caught in `WorkoutApi` and mapped. Nothing
-above `data` sees a library exception type, so replacing Ktor touches one file.
+Mapping lives in `data/base/ResultExt.kt`, so nothing above `data` sees a Ktor
+or serialization exception and replacing the HTTP client touches one file.
+
+Known sharp edge, recorded rather than patched: the shared `toResult()` has no
+branch for deserialization failures, so a malformed body lands on `UNKNOWN`
+rather than a distinct parsing code. Adding `ApiError.PARSING` would change a
+convention shared with other projects.
 
 Errors are **non-fatal by design**: a failed refresh sets `load = Failed` and
 leaves cached content untouched (rung 3.4).
@@ -276,7 +283,7 @@ Structural invariants, from the reference implementation:
   network.
 - Intents are a sealed interface, so a new interaction is a compile error until
   a pipeline claims it.
-- Design tokens live in `ui/theme`, referenced by name, never inline hex.
+- Design tokens live in `core/ui/theme`, referenced by name, never inline hex.
   Status colours are **semantic tokens** on an extended theme object
   (`LocalEverfitColors`), not Material `ColorScheme` slots — `error` meaning
   "missed" would be a lie every reader has to decode. See Drill 00 §5b.
@@ -301,7 +308,7 @@ a generic template:
 |---|---|
 | Refresh reverts a local mark (rung 5.5) | Separate override table; refresh never writes it (§3.2) |
 | Wrong row toggles (rung 5.2) | Events carry `id`; no list-position or title addressing (§2.8) |
-| Future days show a stale label (rung 2.3) | `DisplayStatus` computed in `ui/mapper` against today, not stored (§2.4) |
+| Future days show a stale label (rung 2.3) | `DisplayStatus` computed in `feature/mapper` against today, not stored (§2.4) |
 
 ## 3. Data model
 
@@ -395,7 +402,7 @@ error.
 
 ### 5.1 Screen state
 
-Declared in `ui/calendar/CalendarContract.kt`.
+Declared in `feature/calendar/CalendarContract.kt`.
 
 | Field | Purpose |
 |---|---|
