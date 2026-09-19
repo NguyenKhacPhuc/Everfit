@@ -99,12 +99,15 @@ The gate exists for the moment when continuing feels faster than asking.
 
 ## Status
 
-Stages 1 (Plan) and 2 (Design) are complete. Stage 3 has **not started** —
-no production code exists.
+Stages 1 (Plan) and 2 (Design) complete. Stage 3 in progress.
+
+**Intent 00 done.** Compose + Koin + Ktor + Room wired, design-system tokens in
+place, 4 JVM tests green, gate proven to fail (exit 1 on a broken test), app
+verified launching on `emulator-5554`.
 
 | Intent | Drill | Rungs |
 |---|---|---|
-| 00 Foundation | ✅ APPROVED | 0.1 ✅ · 0.6 ✅ · 0.2–0.5 not started |
+| 00 Foundation | ✅ APPROVED | **0.1–0.6 ✅ complete** |
 | 01 Week grid | ✅ APPROVED | not started |
 | 02 Data layer | ✅ APPROVED | not started |
 | 03 Local cache | ✅ APPROVED | not started |
@@ -114,7 +117,7 @@ no production code exists.
 
 **All seven drills APPROVED 2026-09-19. Deadline **2026-09-20 10:44 +07**.**
 
-Intent 00 in progress.
+**Next: Intent 01, rung 1.1** — `WeekProvider`, pure Kotlin, test-first.
 
 Open blockers: design PNGs (`docs/design/`) block rungs 1.4 and 4.1–4.5; the
 status enum meaning (spec §7) is settled by the same exports.

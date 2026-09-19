@@ -46,6 +46,13 @@ where rung 5.5's logic is tested anyway.
 
 **Trigger for the fallback: 45 minutes lost to KSP resolution.**
 
+> **RESOLVED 2026-09-19, Intent 00.** KSP did fail against AGP 9.1.1 — it
+> registers generated sources via `kotlin.sourceSets`, which built-in Kotlin
+> rejects — but the documented flag `android.disallowKotlinSourceSets=false`
+> fixes it, and a spike confirmed Room's processor emits `_Impl` classes. The
+> trigger never fired; cost was about ten minutes. **Room stands; option C is
+> not needed.**
+
 ## 5. Affects
 
 Rung 5.5 depends on the two-table design. Under the fallback, "two tables"

@@ -167,7 +167,14 @@ Do not target a coverage percentage. The §6 matrices are the target.
 
 ## Project facts worth remembering
 
-- AGP 9 compiles Kotlin with **no separate Kotlin plugin** applied.
+- AGP 9 compiles Kotlin with **no separate Kotlin plugin** applied. Bundled
+  Kotlin is **2.2.10** — Compose and KSP plugin versions must match it.
+- **KSP needs `android.disallowKotlinSourceSets=false`** in `gradle.properties`.
+  AGP 9's built-in Kotlin otherwise rejects the generated source registration.
+  Do not remove that line; Room stops compiling.
+- The app is **Compose-only and light-only**. No AppCompat, no Material XML, no
+  `values-night`. `res/values/themes.xml` is a bare window theme; all styling
+  lives in `ui/theme`.
 - The mock API returns **no dates** — only `day: 0..6`, mapped onto the current
   Monday–Sunday week.
 - `status` values `0/1/2` are **undocumented**; the working assumption is
