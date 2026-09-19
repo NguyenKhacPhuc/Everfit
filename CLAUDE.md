@@ -127,7 +127,10 @@ Store pattern follows `/Users/phucnguyen/Documents/mvi-search` — read
   `remember`.
 - UI events are a sealed interface, so a new interaction fails to compile until
   handled.
-- Colours, spacing and type come from `ui/theme`. No inline hex in composables.
+- Colours, spacing and type come from `ui/theme`. **No inline hex, dp or sp
+  literals in composables** — if a token is missing, add it to the theme.
+- Status colours are semantic tokens on `LocalEverfitColors`, never Material
+  `ColorScheme` slots.
 - Koin uses the plain DSL. Do not add Koin Annotations — it reintroduces KSP.
 
 ## Testing

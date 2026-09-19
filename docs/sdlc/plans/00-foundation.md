@@ -1,11 +1,12 @@
 # Drill 00 — Foundation
 
-Status: **DRAFT — awaiting approval** · Covers rungs 0.2–0.4
+Status: **DRAFT — awaiting approval** · Covers rungs 0.2–0.5
 
 ## 1. Goal
 
-A launchable app with Compose, Koin, Room and Ktor wired in, **a working unit
-test harness**, and a single command that provably fails when something breaks.
+A launchable app with Compose, Koin, Room and Ktor wired in, **a design-system
+skeleton**, **a working unit test harness**, and a single command that provably
+fails when something breaks.
 
 ## 2. Options — library wiring order
 
@@ -62,12 +63,58 @@ These are not optional extras — each causes a confusing failure if missed.
   in `src/test`.
 - **Core library desugaring.** Drill 01 §2 — `java.time` at minSdk 24. Enable it
   in this pass; it affects tests too.
-- **A canary verification.** Rung 0.4 is not satisfied by tests passing. It is
+- **A canary verification.** Rung 0.5 is not satisfied by tests passing. It is
   satisfied by *deliberately breaking one*, observing a non-zero exit, and
   reverting.
 - **Fixture on the test classpath.** §6 reads
   `docs/sdlc/api-sample-response.json`. Either copy it to
   `src/test/resources/` or point a source set at it — decide at the build.
+
+## 5b. Options — design system (rung 0.3)
+
+The app has four status colours (Completed, Missed, Assigned, Upcoming) plus a
+purple "today" highlight. **Material3's `ColorScheme` has no slot for any of
+them** — they are semantic to this domain, not to Material.
+
+**A — Map status colours onto Material slots** (`primary`, `tertiary`, `error`…).
+**B — `MaterialTheme` + an extended token object via `CompositionLocal`.**
+**C — Fully custom theme, no Material.**
+
+| | Pros | Cons |
+|---|---|---|
+| A | No new concepts | `error` meaning "missed" is a lie that every reader has to decode; runs out of slots immediately |
+| B | Material components keep working; semantic names (`colors.statusMissed`) say what they mean | One small piece of theme plumbing |
+| C | Total control | Rebuilds ripple, elevation and typography defaults for no gain on one screen |
+
+**Recommendation: B** — the standard extended-colour pattern.
+`EverfitTheme` wraps `MaterialTheme` and supplies a `LocalEverfitColors`.
+
+### Package shape
+
+```
+ui/theme/      Color, Type, Shape, Spacing, EverfitTheme, StatusColors
+ui/component/  shared primitives — only once used in 2+ places
+ui/calendar/components/   screen-local composables
+```
+
+**Deliberately not building a component library.** One screen does not justify
+one, and premature shared components are harder to unpick than duplicated ones.
+The `ui/component/` package exists so there is an obvious home *if* something
+earns promotion — the structure is the decision, not its contents.
+
+### What rung 0.3 does and does not include
+
+Tokens are created with **placeholder values**. Rung 0.3 is not design work —
+it is making sure that when Intent 04 applies the real design, there is one file
+to edit rather than thirty composables holding inline hex. That is what makes
+spec §2.8's "no inline hex" rule enforceable rather than aspirational.
+
+### Open question
+
+- [ ] **Dark mode.** The generated project has `values-night/`. The design is
+      likely light-only. Supporting both doubles the token work and the
+      screenshot checks. **Lean: light only**, with `values-night` removed so it
+      cannot silently produce an unreviewed dark theme. Confirm from the PNGs.
 
 ## 6. Backtick test names break instrumented tests
 
@@ -106,11 +153,12 @@ Blocks all six other intents. Locks library *and test library* versions into
 
 ## 9. Estimate
 
-**2–3.5h, low-to-medium confidence.** Raised from 1.5–3h: the test harness is
-roughly 30–45 min that was previously unaccounted for.
+**2.5–4h, low-to-medium confidence.** Raised from 1.5–3h: the test harness
+(~30–45 min) and the design-system skeleton (~30 min) were both unaccounted for.
 
-Split: library wiring 60–90 min · test harness + `MainDispatcherRule` + fixture
-30–45 min · gate verification 15 min · troubleshooting buffer 30–60 min.
+Split: library wiring 60–90 min · design system 30 min · test harness +
+`MainDispatcherRule` + fixture 30–45 min · gate verification 15 min ·
+troubleshooting buffer 30–60 min.
 
 Blows up if: no Compose-compiler or KSP release matches AGP 9.1.1 / Gradle
 9.3.1. That is a version-matrix problem resolved by moving AGP, not by trying

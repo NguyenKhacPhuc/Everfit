@@ -104,7 +104,7 @@ no production code exists.
 
 | Intent | Drill | Rungs |
 |---|---|---|
-| 00 Foundation | DRAFT | 0.1 ✅ · 0.5 ✅ · 0.2–0.4 not started |
+| 00 Foundation | DRAFT | 0.1 ✅ · 0.6 ✅ · 0.2–0.5 not started |
 | 01 Week grid | DRAFT | not started |
 | 02 Data layer | DRAFT | not started |
 | 03 Local cache | DRAFT | not started |

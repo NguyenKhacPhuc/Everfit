@@ -48,6 +48,7 @@ restating it — that is what stops the two drifting.
 | Error taxonomy | `data/DataError.kt` | §2.7 |
 | Persisted shape | `data/local/entity/` | §3.2 |
 | Week rule | `domain/WeekProvider.kt` | §4.1 |
+| Design tokens | `ui/theme/` — `EverfitTheme` wraps `MaterialTheme` | §2.8 |
 | Status rule | `domain/StatusResolver.kt` | §4.2 |
 
 ## 1. Technology choices
@@ -111,6 +112,10 @@ maps 1:1 onto a module.
 
 Five packages: `mvi/` (the store), `ui/` (Compose + contract + reducer),
 `domain/` (rules, no framework types), `data/` (Ktor, Room, mappers), `di/`.
+
+Inside `ui/`: `theme/` holds every design token, `component/` holds shared
+primitives (empty until something is used twice), and each feature keeps its own
+`components/`. The split exists so "no inline hex" has one enforceable home.
 
 File-level detail is in the source map above — repeating it as a tree would
 give two places to update and one of them would be wrong.
@@ -258,6 +263,9 @@ Structural invariants, from the reference implementation:
 - Intents are a sealed interface, so a new interaction is a compile error until
   a pipeline claims it.
 - Design tokens live in `ui/theme`, referenced by name, never inline hex.
+  Status colours are **semantic tokens** on an extended theme object
+  (`LocalEverfitColors`), not Material `ColorScheme` slots — `error` meaning
+  "missed" would be a lie every reader has to decode. See Drill 00 §5b.
 
 #### Flattening strategy per pipeline
 
