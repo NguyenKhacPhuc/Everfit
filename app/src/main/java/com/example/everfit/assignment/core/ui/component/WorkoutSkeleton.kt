@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.ui.calendar.components
+package com.example.everfit.assignment.core.ui.component
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.everfit.assignment.ui.theme.EverfitTheme
+import com.example.everfit.assignment.core.ui.theme.EverfitTheme
 
 /**
  * A placeholder where a workout card will land, with a shimmer sweeping across it.

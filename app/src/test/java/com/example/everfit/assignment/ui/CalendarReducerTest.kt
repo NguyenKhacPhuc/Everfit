@@ -1,12 +1,12 @@
 package com.example.everfit.assignment.ui
 
 import com.example.everfit.assignment.core.model.DisplayStatus
-import com.example.everfit.assignment.ui.calendar.CalendarResult
-import com.example.everfit.assignment.ui.calendar.CalendarState
-import com.example.everfit.assignment.ui.calendar.DayUiModel
-import com.example.everfit.assignment.ui.calendar.Load
-import com.example.everfit.assignment.ui.calendar.WorkoutUiModel
-import com.example.everfit.assignment.ui.calendar.reduceCalendar
+import com.example.everfit.assignment.feature.calendar.CalendarResult
+import com.example.everfit.assignment.feature.calendar.CalendarState
+import com.example.everfit.assignment.feature.calendar.DayUiModel
+import com.example.everfit.assignment.feature.calendar.Load
+import com.example.everfit.assignment.feature.calendar.WorkoutUiModel
+import com.example.everfit.assignment.feature.calendar.reduceCalendar
 import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals

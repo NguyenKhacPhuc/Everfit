@@ -1,10 +1,10 @@
-package com.example.everfit.assignment.ui.mapper
+package com.example.everfit.assignment.feature.mapper
 
 import com.example.everfit.assignment.core.model.DayPosition
 import com.example.everfit.assignment.core.model.WorkoutAssignment
 import com.example.everfit.assignment.core.domain.resolveDisplay
-import com.example.everfit.assignment.ui.calendar.DayUiModel
-import com.example.everfit.assignment.ui.calendar.WorkoutUiModel
+import com.example.everfit.assignment.feature.calendar.DayUiModel
+import com.example.everfit.assignment.feature.calendar.WorkoutUiModel
 import java.time.LocalDate
 
 /**

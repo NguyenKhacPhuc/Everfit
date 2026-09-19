@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.ui.calendar
+package com.example.everfit.assignment.feature.calendar
 
 /**
  * Facts produced by work that already happened — never requests.

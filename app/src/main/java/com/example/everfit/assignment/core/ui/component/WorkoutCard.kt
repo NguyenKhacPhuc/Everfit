@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.ui.calendar.components
+package com.example.everfit.assignment.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,8 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.everfit.assignment.R
 import com.example.everfit.assignment.core.model.DisplayStatus
-import com.example.everfit.assignment.ui.calendar.WorkoutUiModel
-import com.example.everfit.assignment.ui.theme.EverfitTheme
+import com.example.everfit.assignment.feature.calendar.WorkoutUiModel
+import com.example.everfit.assignment.core.ui.theme.EverfitTheme
 
 /**
  * One workout card.

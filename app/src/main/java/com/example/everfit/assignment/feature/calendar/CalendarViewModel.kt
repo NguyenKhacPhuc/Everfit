@@ -1,14 +1,14 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package com.example.everfit.assignment.ui.calendar
+package com.example.everfit.assignment.feature.calendar
 
-import com.example.everfit.assignment.core.Result
+import com.example.everfit.assignment.core.model.Result
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.core.domain.WeekProvider
 import com.example.everfit.assignment.core.domain.WorkoutRepository
 import com.example.everfit.assignment.core.mvi.MviViewModel
 import com.example.everfit.assignment.core.mvi.flatMapFirst
-import com.example.everfit.assignment.ui.mapper.toDayUiModels
+import com.example.everfit.assignment.feature.mapper.toDayUiModels
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat

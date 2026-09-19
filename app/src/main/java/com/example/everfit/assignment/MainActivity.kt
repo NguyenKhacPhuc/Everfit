@@ -12,10 +12,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.everfit.assignment.ui.calendar.CalendarEffect
-import com.example.everfit.assignment.ui.calendar.CalendarScreen
-import com.example.everfit.assignment.ui.calendar.CalendarViewModel
-import com.example.everfit.assignment.ui.theme.EverfitTheme
+import com.example.everfit.assignment.feature.calendar.CalendarEffect
+import com.example.everfit.assignment.feature.calendar.CalendarScreen
+import com.example.everfit.assignment.feature.calendar.CalendarViewModel
+import com.example.everfit.assignment.core.ui.theme.EverfitTheme
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {

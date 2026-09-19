@@ -1,7 +1,7 @@
 package com.example.everfit.assignment.data
 
 import app.cash.turbine.test
-import com.example.everfit.assignment.core.Result
+import com.example.everfit.assignment.core.model.Result
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.data.local.dao.CompletionDao
 import com.example.everfit.assignment.data.local.dao.WorkoutDao

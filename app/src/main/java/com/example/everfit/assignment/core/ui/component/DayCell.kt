@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.ui.calendar.components
+package com.example.everfit.assignment.core.ui.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.everfit.assignment.ui.theme.EverfitTheme
+import com.example.everfit.assignment.core.ui.theme.EverfitTheme
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale

@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.ui.calendar
+package com.example.everfit.assignment.feature.calendar
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -24,11 +24,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.everfit.assignment.R
 import com.example.everfit.assignment.core.model.DisplayStatus
-import com.example.everfit.assignment.ui.calendar.components.DayCell
-import com.example.everfit.assignment.ui.calendar.components.WorkoutCard
-import com.example.everfit.assignment.ui.calendar.components.WorkoutSkeleton
+import com.example.everfit.assignment.core.ui.component.DayCell
+import com.example.everfit.assignment.core.ui.component.WorkoutCard
+import com.example.everfit.assignment.core.ui.calendar.components.WorkoutSkeleton
 import kotlinx.coroutines.delay
-import com.example.everfit.assignment.ui.theme.EverfitTheme
+import com.example.everfit.assignment.core.ui.theme.EverfitTheme
 import java.time.LocalDate
 
 /**

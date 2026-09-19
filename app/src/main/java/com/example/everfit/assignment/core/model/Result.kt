@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.core
+package com.example.everfit.assignment.core.model
 
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.data.network.BaseResponse

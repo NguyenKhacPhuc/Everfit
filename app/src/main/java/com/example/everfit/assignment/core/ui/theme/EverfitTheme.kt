@@ -1,10 +1,13 @@
-package com.example.everfit.assignment.ui.theme
+package com.example.everfit.assignment.core.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
+import com.example.everfit.assignment.ui.theme.EverfitColors
+import com.example.everfit.assignment.ui.theme.LightEverfitColors
+import com.example.everfit.assignment.ui.theme.LocalEverfitColors
 
 /**
  * Wraps MaterialTheme so Material components keep working, and layers this app's

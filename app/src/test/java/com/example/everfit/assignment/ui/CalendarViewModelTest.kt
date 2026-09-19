@@ -2,16 +2,16 @@ package com.example.everfit.assignment.ui
 
 import app.cash.turbine.test
 import com.example.everfit.assignment.MainDispatcherRule
-import com.example.everfit.assignment.core.Result
+import com.example.everfit.assignment.core.model.Result
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.core.domain.WeekProvider
 import com.example.everfit.assignment.core.domain.WorkoutRepository
 import com.example.everfit.assignment.core.model.StoredStatus
 import com.example.everfit.assignment.core.model.WorkoutAssignment
-import com.example.everfit.assignment.ui.calendar.CalendarEffect
-import com.example.everfit.assignment.ui.calendar.CalendarIntent
-import com.example.everfit.assignment.ui.calendar.CalendarViewModel
-import com.example.everfit.assignment.ui.calendar.Load
+import com.example.everfit.assignment.feature.calendar.CalendarEffect
+import com.example.everfit.assignment.feature.calendar.CalendarIntent
+import com.example.everfit.assignment.feature.calendar.CalendarViewModel
+import com.example.everfit.assignment.feature.calendar.Load
 import java.time.Clock
 import java.time.LocalDate
 import java.time.ZoneId

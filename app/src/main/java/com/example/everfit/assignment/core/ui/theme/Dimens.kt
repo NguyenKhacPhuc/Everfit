@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.ui.theme
+package com.example.everfit.assignment.core.ui.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf

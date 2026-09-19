@@ -7,7 +7,7 @@ import com.example.everfit.assignment.core.domain.WeekProvider
 import com.example.everfit.assignment.core.domain.WorkoutRemoteSource
 import com.example.everfit.assignment.core.domain.WorkoutRepository
 import com.example.everfit.assignment.core.ext.json.JsonHelper
-import com.example.everfit.assignment.ui.calendar.CalendarViewModel
+import com.example.everfit.assignment.feature.calendar.CalendarViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation

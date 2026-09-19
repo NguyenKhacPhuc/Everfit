@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.ui.theme
+package com.example.everfit.assignment.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

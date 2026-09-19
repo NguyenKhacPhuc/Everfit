@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.ui.calendar
+package com.example.everfit.assignment.feature.calendar
 
 import androidx.compose.runtime.Immutable
 import com.example.everfit.assignment.core.model.DisplayStatus
