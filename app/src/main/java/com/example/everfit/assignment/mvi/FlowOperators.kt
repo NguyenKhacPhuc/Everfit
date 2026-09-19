@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
  * A double-tapped refresh must not produce two requests, and must not cancel the
  * first one either — neither built-in operator does that.
  */
+// Ported from my own mvi-search sample (see README). The standard library has
+// no operator that ignores new work while work is running without cancelling it.
 fun <T, R> Flow<T>.flatMapFirst(transform: suspend (T) -> Flow<R>): Flow<R> = channelFlow {
     val busy = AtomicBoolean(false)
     collect { value ->

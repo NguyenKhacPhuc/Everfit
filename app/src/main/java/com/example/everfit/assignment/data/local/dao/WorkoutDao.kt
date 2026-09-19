@@ -18,6 +18,9 @@ interface WorkoutDao {
      * The merge happens here, in SQL, so a reader can never see assignments and
      * overrides from two different instants.
      */
+    // I wrote the LEFT JOIN this way, rather than combining two Flows, after
+    // working through with Claude that an in-memory combine can expose
+    // assignments and overrides captured at two different instants.
     @Query(
         """
         SELECT a.id            AS id,

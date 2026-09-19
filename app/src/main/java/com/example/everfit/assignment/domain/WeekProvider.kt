@@ -16,6 +16,9 @@ import java.time.temporal.TemporalAdjusters
  * and the clock carries the zone, which is what makes [today] a local-calendar
  * answer rather than a UTC one.
  */
+// Date math drafted with Claude. I chose previousOrSame(MONDAY) over
+// WeekFields.of(locale) after it flagged that a locale-aware week start yields
+// Sunday-first in some locales, and added the timezone and DST cases myself.
 class WeekProvider(private val clock: Clock) {
 
     /** The local date, in the clock's zone. */

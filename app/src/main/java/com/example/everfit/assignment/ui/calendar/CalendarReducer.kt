@@ -26,6 +26,8 @@ sealed interface CalendarResult {
  * Note that no branch clears `days`. Rung 3.4 — a failed refresh must not destroy
  * cached content — therefore holds by construction rather than by remembering.
  */
+// Shape follows my mvi-search sample: a top-level function so it has no `this`
+// and cannot read a repository even by accident.
 fun reduceCalendar(state: CalendarState, result: CalendarResult): CalendarState =
     when (result) {
         is CalendarResult.CachedLoaded -> state.copy(days = result.days)
