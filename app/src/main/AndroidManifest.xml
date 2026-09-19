@@ -3,7 +3,10 @@
           xmlns:tools="http://schemas.android.com/tools"
 >
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
+            android:name=".EverfitApplication"
             android:allowBackup="true"
             android:fullBackupContent="@xml/backup_rules"
             android:dataExtractionRules="@xml/data_extraction_rules"

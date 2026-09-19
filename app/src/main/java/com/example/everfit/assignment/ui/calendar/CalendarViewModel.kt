@@ -25,12 +25,7 @@ class CalendarViewModel(
     private val repository: WorkoutRepository,
     weekProvider: WeekProvider,
 ) : MviViewModel<CalendarIntent, CalendarResult, CalendarState, CalendarEffect>(
-    CalendarState(
-        // Populated synchronously, never from the network. This is what makes the
-        // brief's loading requirement — correct dates, empty data — fall out.
-        weekDates = weekProvider.currentWeek(),
-        today = weekProvider.today(),
-    )
+    initialState(weekProvider)
 ) {
     override val reducer: (CalendarState, CalendarResult) -> CalendarState = ::reduceCalendar
 
@@ -111,6 +106,21 @@ class CalendarViewModel(
 
         else -> null
     }
+}
+
+/**
+ * Seven day rows exist from the very first frame, each with no workouts. That is
+ * the brief's loading requirement — correct dates, empty data — satisfied by the
+ * initial state rather than by a branch in the screen.
+ */
+private fun initialState(weekProvider: WeekProvider): CalendarState {
+    val week = weekProvider.currentWeek()
+    val today = weekProvider.today()
+    return CalendarState(
+        weekDates = week,
+        today = today,
+        days = week.map { DayUiModel(date = it, isToday = it == today, workouts = emptyList()) },
+    )
 }
 
 private fun Result.Error.userMessage(): String = when {
