@@ -13,9 +13,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onStart
 
 /**
  * Pipelines only. Note what is not in scope: any mutable state. This class
@@ -55,16 +54,22 @@ class CalendarViewModel(
      * the first. flatMapLatest would cancel the in-flight one; flatMapConcat would
      * queue a redundant second.
      *
-     * The initial load is merged in as a trigger rather than emitted as an intent,
-     * so it cannot be lost to a race between construction and subscription.
+     * The initial load goes through the same operator, so a Retry arriving while
+     * the first load is still in flight is dropped rather than duplicated.
      */
     private fun wireRefresh() {
-        val triggers = merge(
-            flowOf(Unit),
-            intents.filterIsInstance<CalendarIntent.Refresh>().map { },
-        )
+        // Opening the screen is itself a refresh request, so it is emitted as
+        // one rather than as a nameless trigger.
+        //
+        // onStart, not onIntent(Refresh) from init: onIntent does a tryEmit into
+        // a SharedFlow that has no collectors yet at construction time, so the
+        // initial load would be silently dropped and the app would open blank.
+        // Emitting here makes it part of the very flow being collected.
+        val refreshRequests = intents
+            .filterIsInstance<CalendarIntent.Refresh>()
+            .onStart { emit(CalendarIntent.Refresh) }
 
-        triggers
+        refreshRequests
             .flatMapFirst {
                 flow {
                     emit(CalendarResult.RefreshStarted)
@@ -120,8 +125,6 @@ private fun initialState(weekProvider: WeekProvider): CalendarState {
         weekDates = week,
         today = today,
         days = week.map { DayUiModel(date = it, isToday = it == today, workouts = emptyList()) },
-        // Refreshing, not Idle: a refresh is wired to start immediately, and
-        // claiming Idle here makes "never loaded" look like "nothing scheduled".
         load = Load.Refreshing,
     )
 }

@@ -37,10 +37,6 @@ class WorkoutRepositoryImpl(
         workoutDao.observeAll().map { rows -> rows.map { it.toDomain() } }
 
     override suspend fun refresh(): Result<Unit> = withContext(ioDispatcher) {
-        // asResult() types the failure once, here, rather than in the API class.
-        // firstOrNull, not first: safeApiCall swallows an unparseable response
-        // shape and completes without emitting, and `first()` would turn that
-        // into a NoSuchElementException instead of a reportable error.
         val fetched = remote.fetchWorkouts()
             .asResult()
             .filterNot { it is Result.Loading }
@@ -49,12 +45,6 @@ class WorkoutRepositoryImpl(
 
         when (fetched) {
             is Result.Success -> {
-                // Writes workout_assignments ONLY. completion_overrides is never
-                // touched here, which is what stops a refresh reverting a local
-                // mark (rung 5.5) — and, deliberately, means an override
-                // outlives every later refresh. See resolveCompletion's KDoc for
-                // why that permanence was chosen over releasing the override
-                // once the server agrees.
                 workoutDao.replaceAssignments(fetched.data.map { it.toEntity() })
                 Result.Success(Unit)
             }
