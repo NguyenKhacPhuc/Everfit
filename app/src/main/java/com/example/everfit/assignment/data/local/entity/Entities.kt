@@ -4,9 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-/**
- * Server truth. Replaced wholesale on every refresh.
- */
+/** Server truth. Replaced wholesale on every refresh. */
 @Entity(tableName = "workout_assignments")
 data class WorkoutAssignmentEntity(
     @PrimaryKey val id: String,
@@ -17,15 +15,10 @@ data class WorkoutAssignmentEntity(
 )
 
 /**
- * The user's own mark, in a table of its own.
+ * Separate from the assignment so a refresh structurally cannot destroy it.
  *
- * This separation is the whole answer to rung 5.5: a refresh replaces
- * `workout_assignments` and structurally cannot touch this table, so a local
- * mark cannot be destroyed by a server response that disagrees with it.
- *
- * A single mutable `is_completed` column on the assignment would be less code
- * and would silently revert the user's tap on the next refresh — a bug that
- * appears only after a refresh, so it survives casual testing.
+ * A mutable `is_completed` column would be less code, and would silently revert
+ * the user's tap on the next refresh.
  */
 @Entity(tableName = "completion_overrides")
 data class CompletionOverrideEntity(
@@ -34,7 +27,7 @@ data class CompletionOverrideEntity(
     @ColumnInfo(name = "updated_at") val updatedAt: Long,
 )
 
-/** Projection of the two tables joined, so the merge happens in SQL, not in memory. */
+/** The two tables joined. */
 data class WorkoutWithOverride(
     @ColumnInfo(name = "id") val id: String,
     @ColumnInfo(name = "day_index") val dayIndex: Int,

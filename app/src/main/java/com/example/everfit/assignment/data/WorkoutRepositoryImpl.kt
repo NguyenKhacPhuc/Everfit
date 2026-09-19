@@ -18,14 +18,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-/**
- * Cache is the source of truth; the network only writes into it.
- *
- * [observeWeek] reads the local store, so cached content reaches the UI without
- * waiting on any request. [refresh] returns no data — it writes and reports
- * success or failure. That is what makes "cache first, network second" an
- * ordering property of the design rather than a timing accident.
- */
+/** Cache is the source of truth; the network only writes into it. */
 class WorkoutRepositoryImpl(
     private val remote: WorkoutRemoteSource,
     private val workoutDao: WorkoutDao,
@@ -40,7 +33,7 @@ class WorkoutRepositoryImpl(
         val fetched = remote.fetchWorkouts()
             .asResult()
             .filterNot { it is Result.Loading }
-            .firstOrNull()
+            .firstOrNull() // not first(): safeApiCall can complete without emitting
             ?: Result.Error(ApiError.UNKNOWN, "empty response")
 
         when (fetched) {
@@ -49,7 +42,7 @@ class WorkoutRepositoryImpl(
                 Result.Success(Unit)
             }
 
-            // Non-destructive by construction: no branch clears the cache.
+            // No branch clears the cache.
             is Result.Error -> fetched
             Result.Loading -> Result.Loading
         }

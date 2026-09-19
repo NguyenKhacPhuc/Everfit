@@ -4,14 +4,9 @@ import com.example.everfit.assignment.core.model.WorkoutAssignment
 import kotlinx.coroutines.flow.Flow
 
 /**
- * The network, as the repository sees it.
- *
- * A cold [Flow] rather than a suspend function, matching the shared
- * safeApiCall/asResult idiom: failures travel as exceptions and are typed once,
- * at the collecting end.
- *
- * It also stays testable in the way rung 3.3 needs — a fake can hold the flow
- * open, which is the only way to prove cache emits *before* the network returns.
+ * A cold [Flow] rather than a suspend function: failures travel as exceptions
+ * and are typed once by `asResult()` at the collecting end. A fake can also
+ * hold it open, which is how the cache-before-network test is written.
  */
 interface WorkoutRemoteSource {
     fun fetchWorkouts(): Flow<List<WorkoutAssignment>>

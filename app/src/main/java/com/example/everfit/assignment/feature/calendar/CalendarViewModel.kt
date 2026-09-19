@@ -8,7 +8,7 @@ import com.example.everfit.assignment.core.domain.WeekProvider
 import com.example.everfit.assignment.core.domain.WorkoutRepository
 import com.example.everfit.assignment.core.mvi.MviViewModel
 import com.example.everfit.assignment.core.mvi.flatMapFirst
-import com.example.everfit.assignment.feature.mapper.toDayUiModels
+import com.example.everfit.assignment.feature.calendar.mapper.toDayUiModels
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
@@ -58,13 +58,6 @@ class CalendarViewModel(
      * the first load is still in flight is dropped rather than duplicated.
      */
     private fun wireRefresh() {
-        // Opening the screen is itself a refresh request, so it is emitted as
-        // one rather than as a nameless trigger.
-        //
-        // onStart, not onIntent(Refresh) from init: onIntent does a tryEmit into
-        // a SharedFlow that has no collectors yet at construction time, so the
-        // initial load would be silently dropped and the app would open blank.
-        // Emitting here makes it part of the very flow being collected.
         val refreshRequests = intents
             .filterIsInstance<CalendarIntent.Refresh>()
             .onStart { emit(CalendarIntent.Refresh) }

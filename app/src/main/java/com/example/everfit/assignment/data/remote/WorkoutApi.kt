@@ -10,12 +10,7 @@ import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/**
- * The only place that knows Ktor exists.
- *
- * safeApiCall keeps the call itself to one readable line; typing the failure is
- * `asResult()`'s job at the collecting end, so nothing here catches or maps.
- */
+/** The only place that knows Ktor exists. Failures are typed by `asResult()`. */
 class WorkoutApi(
     private val client: HttpClient,
     private val endpoint: String,

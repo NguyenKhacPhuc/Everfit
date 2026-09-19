@@ -3,12 +3,8 @@ package com.example.everfit.assignment.data.network
 import kotlinx.serialization.Serializable
 
 /**
- * The envelope every endpoint returns.
- *
- * The workouts endpoint responds with `{"data": [...]}` and carries **no**
- * status/success flag, so [isSuccessful] treats their absence as success.
- * Requiring `status == true` — as a backend that always sends one could — would
- * reject every response this API produces.
+ * This endpoint sends no status/success flag, so [isSuccessful] treats their
+ * absence as success — requiring `status == true` would reject every response.
  */
 @Serializable
 data class BaseResponse<T>(

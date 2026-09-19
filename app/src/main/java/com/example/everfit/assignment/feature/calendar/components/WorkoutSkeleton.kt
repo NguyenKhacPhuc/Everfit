@@ -25,15 +25,9 @@ import androidx.compose.ui.unit.dp
 import com.example.everfit.assignment.core.ui.theme.EverfitTheme
 
 /**
- * A placeholder where a workout card will land, with a shimmer sweeping across it.
- *
- * The design provides no loading treatment, so this is invented — kept restrained
- * by reusing the card's geometry and keeping the two band colours a few points
- * either side of the card fill. A high-contrast sweep would read as a different
- * component rather than a card that has not arrived yet.
- *
- * Height matches a single-workout card, so the row does not resize when real
- * content replaces it.
+ * Placeholder where a workout card will land. The design provides no loading
+ * treatment, so this is invented — it reuses the card's geometry, and its height
+ * matches a single-workout card so the row does not resize.
  */
 @Composable
 fun WorkoutSkeleton(modifier: Modifier = Modifier) {

@@ -10,20 +10,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 /**
- * Wraps an API call so the call site reads as one line and every failure leaves
- * as an exception for `asResult()` to type.
+ * Failures leave as exceptions for `asResult()` to type.
  *
- * Two behaviours inherited from the shared wrapper, both deliberate and both
- * sharp enough to be worth stating:
- *
- * 1. A [NoTransformationFoundException] is swallowed, because a backend can
- *    return a shape we cannot parse and that must not crash the app. The flow
- *    then completes **without emitting**, so a collector must tolerate zero
- *    items — see WorkoutRepositoryImpl, which treats "no emission" as an error
- *    rather than letting `first()` throw.
- * 2. `data` is cast to `T` unchecked. A 2xx response carrying a null `data`
- *    would emit null. This endpoint always returns the array, and the parsing
- *    tests pin that.
+ * Note [NoTransformationFoundException] is swallowed, so the flow can complete
+ * **without emitting** — collectors must tolerate zero items.
  */
 fun <T : Any?> safeApiCall(call: suspend () -> BaseResponse<T>): Flow<T> = flow {
     try {
@@ -40,12 +30,7 @@ fun <T : Any?> safeApiCall(call: suspend () -> BaseResponse<T>): Flow<T> = flow 
     }
 }
 
-/**
- * GET returning the envelope.
- *
- * Named rather than overloading `get`, which would clash with Ktor's own
- * single-argument `get(urlString)`.
- */
+/** Named rather than overloading Ktor's own single-argument `get(urlString)`. */
 suspend inline fun <reified Response> HttpClient.getBaseResponse(
     url: String,
 ): BaseResponse<Response> = get(url).body()

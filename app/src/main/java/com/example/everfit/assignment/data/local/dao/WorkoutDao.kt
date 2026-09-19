@@ -15,18 +15,8 @@ import kotlinx.coroutines.flow.Flow
 interface WorkoutDao {
 
     /**
-     * The merge is a LEFT JOIN rather than two flows combined in Kotlin.
-     *
-     * It is the relational expression of "assignments, with their override if
-     * any" — and it is one query, one invalidation and one emission, where
-     * `combine` would need two subscriptions, would re-emit on either table
-     * changing, and would rebuild a lookup map on every emission.
-     *
-     * It also keeps the pair atomic. That is *not* load-bearing today: nothing
-     * writes both tables in one transaction, so `combine` could not actually
-     * tear. It would become load-bearing the moment something did — pruning
-     * redundant overrides during a refresh, say, which is exactly what option B
-     * in Drill 05 §6 would have done.
+     * A LEFT JOIN rather than two flows combined in Kotlin: one query, one
+     * invalidation, one emission — and the pair stays atomic.
      */
     @Query(
         """
@@ -49,10 +39,7 @@ interface WorkoutDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAssignments(items: List<WorkoutAssignmentEntity>)
 
-    /**
-     * Replaces server truth atomically. Note it touches only
-     * `workout_assignments` — never `completion_overrides`.
-     */
+    /** Touches only `workout_assignments` — never `completion_overrides`. */
     @Transaction
     suspend fun replaceAssignments(items: List<WorkoutAssignmentEntity>) {
         deleteAllAssignments()

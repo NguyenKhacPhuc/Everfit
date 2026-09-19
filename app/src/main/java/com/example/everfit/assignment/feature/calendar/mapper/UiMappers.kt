@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.feature.mapper
+package com.example.everfit.assignment.feature.calendar.mapper
 
 import com.example.everfit.assignment.core.model.DayPosition
 import com.example.everfit.assignment.core.model.WorkoutAssignment
