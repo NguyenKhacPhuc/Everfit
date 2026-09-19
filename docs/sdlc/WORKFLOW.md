@@ -109,9 +109,9 @@ place, gate proven to fail (exit 1 on a broken test), app verified launching on
 Mon–Sun grid with today highlighted, verified on device against the real date.
 **14 JVM tests green.**
 
-> **Open layout assumption:** the week is rendered as seven *rows*, not seven
-> columns, because the brief requires each day to hold multiple workout cards.
-> Confirm against the design before Intent 04.
+Design exports received. Layout assumption **confirmed** (seven rows). Tokens
+applied from `training.png`. Status enum **corrected**: `0=ASSIGNED, 1=MISSED,
+2=COMPLETED` — the prior assumption had 1 and 2 reversed.
 
 | Intent | Drill | Rungs |
 |---|---|---|
@@ -127,8 +127,17 @@ Mon–Sun grid with today highlighted, verified on device against the real date.
 
 **Next: Intent 02, rung 2.1** — DTOs and parsing against the committed fixture, test-first.
 
-Open blockers: design PNGs (`docs/design/`) block rungs 1.4 and 4.1–4.5; the
-status enum meaning (spec §7) is settled by the same exports.
+**No blockers.** Design exports are in `docs/design/`; both open questions are
+resolved.
+
+Remaining design detail to honour in Intent 04, read off `training.png`:
+
+| Display state | Card | Text |
+|---|---|---|
+| Completed | accent `#7470EF` fill | white title, "Completed", white check right, **no exercise count** |
+| Missed | card `#F7F8FC` | dark title, red "Missed • N exercises" |
+| Assigned (today) | card `#F7F8FC` | dark title, "N exercises", **no status word** |
+| Upcoming (future) | card `#F7F8FC` | grey title *and* grey count |
 
 > Update this table when a rung lands. It is the only place status lives — an
 > agent should not have to open seven files to learn what is next.
