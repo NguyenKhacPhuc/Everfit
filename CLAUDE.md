@@ -70,8 +70,9 @@ inward: `ui -> domain <- data`.
 
 - **`core/` must not import `data/`, `feature/` or `di/`.** Everything depends on
   core, so anything reachable from it is reachable everywhere. In particular
-  `core/model/Result.kt` stays import-free; the Ktor-aware builders live in
-  `data/base/ResultExt.kt`.
+  **`core/model` has no imports at all** — Result, the domain models and nothing
+  else. The Ktor-aware builders live in `data/base/ResultExt.kt`, and wire
+  shapes (`BaseResponse`, `ErrorModel`) in `data/network`.
 - **Screen composables belong in `feature/<screen>/components`**, not `core/ui`.
   If it takes a feature's UI model it is not shared. `core/ui` is theme plus
   genuinely reused pieces.

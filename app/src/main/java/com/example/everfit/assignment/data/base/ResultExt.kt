@@ -2,9 +2,9 @@ package com.example.everfit.assignment.data.base
 
 import com.example.everfit.assignment.core.ext.json.JsonHelper
 import com.example.everfit.assignment.core.model.Result
-import com.example.everfit.assignment.core.model.common.ErrorModel
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.data.network.BaseResponse
+import com.example.everfit.assignment.data.network.ErrorModel
 import com.example.everfit.assignment.data.network.ResponseApiError
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException

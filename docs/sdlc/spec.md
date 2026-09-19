@@ -112,7 +112,7 @@ maps 1:1 onto a module.
 
 ```
 core/      depended on by everything; depends on nothing in the app
-  model/     Result, domain models — no Android, no Ktor
+  model/     Result, domain models — no imports at all
   domain/    rules + repository contracts — no framework types at all
   mvi/       the store
   ui/theme/  design tokens
