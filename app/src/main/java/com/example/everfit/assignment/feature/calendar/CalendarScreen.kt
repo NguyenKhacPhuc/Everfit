@@ -24,9 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.everfit.assignment.R
 import com.example.everfit.assignment.core.model.DisplayStatus
-import com.example.everfit.assignment.core.ui.component.DayCell
-import com.example.everfit.assignment.core.ui.component.WorkoutCard
-import com.example.everfit.assignment.core.ui.component.WorkoutSkeleton
+import com.example.everfit.assignment.feature.calendar.components.DayCell
+import com.example.everfit.assignment.feature.calendar.components.WorkoutCard
+import com.example.everfit.assignment.feature.calendar.components.WorkoutSkeleton
 import kotlinx.coroutines.delay
 import com.example.everfit.assignment.core.ui.theme.EverfitTheme
 import java.time.LocalDate

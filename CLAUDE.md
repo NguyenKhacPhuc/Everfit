@@ -68,7 +68,14 @@ Scope and rationale: [`docs/sdlc/WORKFLOW.md`](docs/sdlc/WORKFLOW.md).
 Layered MVVM with the Clean Architecture dependency rule. Dependencies point
 inward: `ui -> domain <- data`.
 
-- `domain/` imports **no Android and no library types** — no `android.*`, no
+- **`core/` must not import `data/`, `feature/` or `di/`.** Everything depends on
+  core, so anything reachable from it is reachable everywhere. In particular
+  `core/model/Result.kt` stays import-free; the Ktor-aware builders live in
+  `data/base/ResultExt.kt`.
+- **Screen composables belong in `feature/<screen>/components`**, not `core/ui`.
+  If it takes a feature's UI model it is not shared. `core/ui` is theme plus
+  genuinely reused pieces.
+- `core/domain/` imports **no Android and no library types** — no `android.*`, no
   Room, no Ktor, no Compose, no `Context`. Kotlin stdlib and plain JDK types
   (`java.time`) are fine: they are what keep domain tests on the JVM.
 - Never `LocalDate.now()` — take a `Clock`. Never `WeekFields.of(locale)` for

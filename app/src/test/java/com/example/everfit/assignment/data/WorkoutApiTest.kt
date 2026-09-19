@@ -1,7 +1,7 @@
 package com.example.everfit.assignment.data
 
 import com.example.everfit.assignment.core.model.Result
-import com.example.everfit.assignment.core.model.asResult
+import com.example.everfit.assignment.data.base.asResult
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.data.remote.WorkoutApi
 import com.example.everfit.assignment.core.model.StoredStatus

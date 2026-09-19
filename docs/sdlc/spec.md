@@ -110,23 +110,37 @@ maps 1:1 onto a module.
 
 ### 2.2 Package structure
 
-Five packages: `mvi/` (the store), `ui/` (Compose + contract + reducer),
-`domain/` (rules, no framework types), `data/` (Ktor, Room, mappers), `di/`.
+```
+core/      depended on by everything; depends on nothing in the app
+  model/     Result, domain models — no Android, no Ktor
+  domain/    rules + repository contracts — no framework types at all
+  mvi/       the store
+  ui/theme/  design tokens
+  ext/       small helpers
+data/      Ktor, Room, mappers, repository implementation
+feature/   one package per screen: contract, reducer, ViewModel, components
+di/        Koin module
+```
 
-Inside `ui/`: `theme/` holds every design token, `component/` holds shared
-primitives (empty until something is used twice), and each feature keeps its own
-`components/`. The split exists so "no inline hex" has one enforceable home.
+Two rules make the direction checkable rather than aspirational:
 
-File-level detail is in the source map above — repeating it as a tree would
-give two places to update and one of them would be wrong.
+- **`core` may not import `data`, `feature` or `di`.** It is depended on by all
+  of them, so anything reachable from `core` is reachable from everywhere.
+- **`data` may not import `feature`, `core.ui` or `core.mvi`.**
+
+Screen-specific composables live under `feature/<screen>/components`, not in
+`core/ui`. A component that takes a feature's UI model is not shared, and
+putting it in `core` inverts the dependency — `core/ui` holds the theme and
+anything genuinely reused.
 
 ### 2.3 Layer contracts
 
 | Layer | May depend on | Must not contain |
 |---|---|---|
-| `ui` | `domain` | Ktor, Room, DTOs, entities |
-| `domain` | *nothing* | Any Android or library type |
-| `data` | `domain` | Compose, ViewModel |
+| `feature` | `core` | Ktor, Room, DTOs, entities |
+| `core/domain` | *nothing* | Any Android or library type |
+| `core/model` | *nothing* | Android or Ktor types |
+| `data` | `core` | Compose, ViewModel, feature models |
 
 The rule that matters: **`domain` imports nothing.** No `android.*`, no Room,
 no Ktor, not even `Context`. That is what makes the JVM-only test story real.

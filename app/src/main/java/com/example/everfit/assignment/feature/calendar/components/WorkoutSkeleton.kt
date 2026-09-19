@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.core.ui.component
+package com.example.everfit.assignment.feature.calendar.components
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
