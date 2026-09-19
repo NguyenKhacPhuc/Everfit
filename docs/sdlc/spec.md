@@ -68,7 +68,7 @@ authoritative and no one should update this document when it changes.
 | Networking | **Ktor Client** | Kotlin-native, coroutine-first HTTP |
 | Serialization | **kotlinx.serialization** | Ktor-native, no KSP (Drill 02 §2) |
 | DI | **Koin** | Runtime DSL, so no KSP or annotation processing (§2.5) |
-| Pattern | **MVVM** | Single screen; see §2.0 |
+| Pattern | **MVI** | Pure reducer, unidirectional; §2.8 |
 | Dates | **`java.time` + desugaring** | minSdk 24 makes desugaring mandatory (Drill 01 §2) |
 
 ## 2. Architecture
@@ -81,7 +81,7 @@ citation of a specific book.
 
 This build is therefore described precisely rather than branded:
 
-> **Layered MVVM, applying the Clean Architecture dependency rule.**
+> **Layered MVI, applying the Clean Architecture dependency rule.**
 
 What is adopted from Clean Architecture:
 
@@ -124,15 +124,18 @@ and the direction of dependencies, not the file list:
 com.example.everfit.assignment
 ├── EverfitApplication.kt          Application; owns the DI container
 ├── di/
-│   └── AppContainer.kt            Manual DI graph (§2.5)
+│   └── AppModule.kt               Koin module (§2.5)
+├── mvi/
+│   ├── MviViewModel.kt            Store: I/R/S/E, sync region, effects
+│   └── FlowOperators.kt           flatMapFirst
 ├── ui/
 │   ├── MainActivity.kt
 │   ├── theme/                     Colour, type, shape tokens from Figma
 │   ├── calendar/
-│   │   ├── CalendarScreen.kt      Stateless composable
-│   │   ├── CalendarViewModel.kt   State holder
-│   │   ├── CalendarUiState.kt     UI state + UI models
-│   │   ├── CalendarEvent.kt       User intents
+│   │   ├── CalendarContract.kt    State, Intent, Effect, UI models (public)
+│   │   ├── CalendarReducer.kt     Result + reduceCalendar (internal, pure)
+│   │   ├── CalendarViewModel.kt   Pipelines only — cannot write state
+│   │   ├── CalendarScreen.kt      Takes (state, onIntent)
 │   │   └── components/            DayCell, WorkoutCell, StatusIndicator
 │   └── mapper/
 │       └── UiMappers.kt           Domain -> UI model
@@ -271,25 +274,54 @@ Ktor for anything else touches one file.
 Errors are **non-fatal by design**: `refresh()` returning a failure sets
 `error` in UI state and leaves cached content untouched (rung 3.4).
 
-### 2.8 UI architecture
+### 2.8 UI architecture — MVI
 
-Unidirectional data flow:
+Following the store in `/Users/phucnguyen/Documents/mvi-search` (`MviViewModel`,
+`flatMapFirst`), adopted rather than reinvented.
 
 ```
-CalendarViewModel ──StateFlow<CalendarUiState>──> CalendarScreen
-        ▲                                               │
-        └──────────── CalendarEvent ────────────────────┘
+        onIntent(I)                    Result R           reduce(S, R) -> S
+Screen ─────────────> pipelines ──────────────> sync region ──────────> StateFlow<S> ──> Screen
+                                                      │
+                                                      └── effectFor() ──> Channel<E>
 ```
 
-- `CalendarScreen` is **stateless** — it takes `CalendarUiState` and an
-  `(CalendarEvent) -> Unit`. This is what makes every state previewable and
-  screenshot-testable without a ViewModel, a database or a network.
-- All state is hoisted to the ViewModel. Composables hold no `remember`ed
-  business state.
-- Events are a sealed interface (`ToggleCompletion(id)`, `Retry`) rather than
-  loose lambdas, so adding an interaction is a compile error until handled.
-- Design tokens live in `ui/theme` and are referenced by name, never as inline
-  hex. Pixel-perfect work then happens in one place.
+Four type parameters: **I**ntent, **R**esult, **S**tate, **E**ffect.
+
+**Intent ≠ Result.** Intents are what the UI *asks for*; Results are *facts*
+produced by work that has already happened. This is the central discipline, not
+bookkeeping — a Result carries the request it belongs to, which is what lets the
+reducer drop stale work synchronously. A coroutine that writes state itself
+cannot do that: by the time its continuation resumes there is no reliable "is
+this still current".
+
+Structural invariants, from the reference implementation:
+
+| Invariant | Enforced by |
+|---|---|
+| The UI cannot write state | `onIntent` is the only public door in |
+| No torn transitions | One collector, one assignment, nothing suspends in the sync region |
+| The reducer cannot stop being pure | It is a **top-level function** passed as `::reduceCalendar`, so it has no `this` |
+| Every effect coroutine is cancellable | All live in `viewModelScope` via `pipeToState()` |
+| Effects do not replay on rotation | `Channel`, never `StateFlow` |
+
+- `CalendarScreen` takes `(state, onIntent)` and never sees the ViewModel, so
+  every state is previewable and screenshot-testable with no database or
+  network.
+- Intents are a sealed interface, so a new interaction is a compile error until
+  a pipeline claims it.
+- Design tokens live in `ui/theme`, referenced by name, never inline hex.
+
+#### Flattening strategy per pipeline
+
+| Pipeline | Operator | Why |
+|---|---|---|
+| Refresh | `flatMapFirst` | A double tap must not start two refreshes, and must not cancel the first |
+| Toggle completion | `flatMapConcat` | Two rapid toggles are independent facts; neither may cancel the other |
+| Cache observation | plain `map` | A Room `Flow`, not a triggered request |
+
+`flatMapFirst` is not in the standard library and comes from the reference
+implementation.
 
 ### 2.9 Why this survives the fixture's traps
 
@@ -395,55 +427,77 @@ error.
 ### 5.1 Screen state
 
 ```
-CalendarUiState(
+CalendarState(
     weekDates: List<LocalDate>,   // always present, even while loading
-    days: List<DayUiModel>,
-    isLoading: Boolean,
-    error: ErrorType?,
+    days: List<DayUiModel>,       // content
+    load: Load,                   // status, orthogonal to content
 )
+
+sealed interface Load { Idle; Refreshing; Failed(message) }
+```
+
+Derived, never stored — computing them removes the risk of a stale copy:
+
+```
+showsFullScreenError = load is Failed && days.all { it.workouts.isEmpty() }
+isRefreshing         = load is Refreshing
 ```
 
 `weekDates` is populated synchronously from `WeekProvider` at construction,
 never from the network. That is what makes the brief's loading requirement —
 correct dates, empty data — fall out rather than be retrofitted.
 
-Note this is **not** a sealed `Loading | Content | Error` hierarchy. Those
-states are not mutually exclusive here: a failed refresh over good cached data
-is simultaneously content-bearing and errored, which a sealed hierarchy forces
-you to misrepresent.
+**Revision.** This section previously argued for flat `isLoading: Boolean` plus
+`error: ErrorType?`, on the grounds that a failed refresh over good cache is
+simultaneously content-bearing and errored, which a sealed
+`Loading | Content | Error` hierarchy cannot express.
+
+That reasoning rejected the wrong thing. What fails is collapsing *content and
+status into one* hierarchy. Keeping `days` and `load` as **separate fields**,
+with `load` sealed, expresses the awkward case exactly — `Load.Failed` alongside
+a populated `days` — while still making `Refreshing && Failed` unrepresentable.
+Two booleans cannot do that; they permit illegal combinations that then need a
+test to rule out.
 
 ### 5.2 Walkthroughs
 
-The four sequences the architecture exists to get right.
+Each sequence as Intent → Result → State.
 
 **Cold start — empty cache**
 ```
-WeekProvider gives 7 dates   UI: dates visible, cells empty, isLoading
-Room emits []                UI: unchanged
-refresh() -> Ktor -> Room    UI: workouts appear, isLoading false
+(init)              -> WeekProvider              State(weekDates, days=[], Idle)
+Room Flow emits []  -> CachedLoaded([])          unchanged
+Refresh             -> RefreshStarted            load = Refreshing
+                    -> RefreshSucceeded          load = Idle
+Room Flow re-emits  -> CachedLoaded(days)        days populated
 ```
 
 **Warm start — populated cache**
 ```
-WeekProvider gives 7 dates   UI: dates visible
-Room emits cached workouts   UI: full content, immediately
-refresh() in background      UI: updates in place, or doesn't
+Room Flow emits     -> CachedLoaded(days)        content, immediately
+Refresh (background)-> RefreshStarted/Succeeded  load only; days untouched
 ```
 Nothing awaits the network before first render.
 
 **Toggle completion**
 ```
 ToggleCompletion(id) -> upsert completion_overrides   (assignments untouched)
-                     -> Room re-emits                  UI: checkmark appears
+                     -> Room re-emits -> CachedLoaded  checkmark appears
 ```
-The two writes touch different tables, so a concurrent refresh cannot race it.
+The toggle produces no state-changing Result of its own — Room is the source of
+truth, so the write returns through the cache pipeline. Two writes touch
+different tables, so a concurrent refresh cannot race it.
 
 **Refresh fails over good cache**
 ```
-Ktor throws -> DataError.Network -> Result.failure, nothing written
-                                 -> UI: error set, cached content still rendered
+Refresh -> RefreshStarted            load = Refreshing
+        -> RefreshFailed(message)    load = Failed; days untouched
+                                     effectFor -> ShowSnackbar
 ```
-No code path clears the cache on failure, so this holds by construction.
+The reducer never clears `days`, so this holds by construction. A full-screen
+error is *state* (`showsFullScreenError`); a failed refresh over usable content
+is a one-shot *effect* — the same split the reference implementation makes
+between a failed search and a failed page load.
 
 ## 6. Testing strategy
 

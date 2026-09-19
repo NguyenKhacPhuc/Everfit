@@ -72,6 +72,31 @@ that still demos correctly.
 - **Never clear the cache on a refresh failure.** Cached content stays on
   screen; the error is surfaced alongside it, not instead of it.
 
+## MVI rules
+
+Store pattern follows `/Users/phucnguyen/Documents/mvi-search` — read
+`mvi/MviViewModel.kt` there before changing anything in `mvi/`.
+
+- **Intents are requests, Results are facts.** Never send an Intent into the
+  reducer, and never let a Result mean "please do something".
+- **Every async Result carries its request parameters**, so the reducer can drop
+  stale work synchronously. Without them a late response overwrites fresh state.
+- **`reduceCalendar` is a top-level function**, passed as `::reduceCalendar`.
+  Do not make it a method — having no `this` is what stops it reading a
+  repository or a `var` by accident.
+- **The ViewModel holds no mutable state.** It wires pipelines. If you need to
+  write state, emit a Result.
+- **`currentState` is for starting work, never for deciding a transition.**
+  That is the reducer's job.
+- Effects go through a `Channel`, never a `StateFlow`, or they replay on
+  rotation.
+- Pick the flattening operator deliberately: `flatMapFirst` for refresh (a
+  double tap must not start two, nor cancel the first), `flatMapConcat` for
+  toggles (independent facts, neither may cancel the other), `flatMapLatest`
+  only where cancelling is correct.
+- Derived values (`showsFullScreenError`, `isRefreshing`) are computed
+  properties on state, never stored fields.
+
 ## Conventions
 
 - Compose screens are stateless: state in, events out. No business state in
