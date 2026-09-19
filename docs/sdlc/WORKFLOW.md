@@ -132,7 +132,8 @@ applied from `training.png`. Status enum **corrected**: `0=ASSIGNED, 1=MISSED,
 | 03 Local cache | ✅ APPROVED | **3.2–3.5 ✅** · 3.1 instrumented test outstanding |
 | 04 Cell UI | ✅ APPROVED | **4.1–4.5 ✅ complete** |
 | 05 Toggle | ✅ APPROVED | **5.1–5.6 ✅** (verified on device) |
-| 06 Submission | ✅ APPROVED | not started |
+| 06 Submission | ✅ APPROVED | **6.1–6.4 ✅** · 6.5 repo public, 6.6 video outstanding |
+| 07 First-load feedback | **DRAFT — awaiting approval** | not started |
 
 **All seven drills APPROVED 2026-09-19. Deadline **2026-09-20 10:44 +07**.**
 
