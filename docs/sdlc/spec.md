@@ -5,58 +5,50 @@ Reads: [`intent.md`](intent.md) and [`intents/`](intents/)
 
 ## 0. What this document is
 
-In one sentence:
+> **Everything that was decided and must stay true, plus the reason.**
 
-> **Everything that was decided and must stay true, plus the reason it was
-> decided that way.**
-
-It is the artefact Stage 3 reads before writing code, and the artefact a
-reviewer reads to understand why the code looks the way it does.
-
-Note that this is defined by the *kind* of statement, not by topic. Technology,
-patterns and architecture are the obvious residents, but **domain rules belong
-here too** (§4) — the status truth table is neither a technology nor a pattern,
-yet it is a decision the implementation must satisfy, and it is the section most
-expensive to get wrong.
-
-### The test for what belongs here
+The test for what belongs:
 
 > If changing *how* something is implemented — without changing *what was
-> decided* — would make a section wrong, that section does not belong.
+> decided* — would make a section wrong, it does not belong.
 
-A spec that drifts from the code is worse than no spec, because it is trusted.
-Keeping it to decisions is what keeps it true.
+A spec that drifts from the code is worse than none, because it is trusted.
 
-### In scope
+| In | Out |
+|---|---|
+| Layer boundaries | How a function is written |
+| Contracts and persisted shapes | Wiring and configuration |
+| Domain rules, with their truth tables | Exhaustive file listings |
+| Decisions, rejected alternatives, reasons | Anything a refactor invalidates |
 
-- Layer boundaries, and what may cross them
-- Contracts: interface signatures, persisted shapes, error taxonomy, UI state shape
-- Domain rules, with the truth tables that define them
-- Decisions taken, alternatives rejected, and the reason
-- Constraints the implementation must satisfy
-
-### Out of scope
-
-- How a function is written
-- Wiring and configuration that the code expresses more precisely than prose
-- Exhaustive file listings
-- Anything a refactor would invalidate
-
-### Where the rest lives
+Defined by the *kind* of statement, not by topic. Domain rules belong here (§4)
+even though they are neither technology nor architecture — they are decisions
+the implementation must satisfy, and the most expensive to get wrong.
 
 | Content | Home |
 |---|---|
-| Why a decision was taken, options weighed | This document |
-| How an intent will be executed, estimates, risks | `plans/NN-*.md` (drills) |
+| Why a decision was taken | This document |
+| How an intent is executed, estimates, risks | `plans/` |
 | Rules an agent must not break | `CLAUDE.md` |
-| What must be true for a rung to be done | `intents/NN-*.md` |
+| Definition of done for a rung | `intents/` |
 | Exact wiring | The code |
 
-### On code samples below
+### Source map
 
-Where code appears, it is the **contract** — a signature, a shape, a taxonomy.
-Blocks marked *illustrative* show intent only; the implementation is
-authoritative and no one should update this document when it changes.
+Where each contract lives. The spec states the **rule**; the file holds the
+**declaration**. Once a file exists, this document points at it rather than
+restating it — that is what stops the two drifting.
+
+| Contract | File | Rule in |
+|---|---|---|
+| MVI store, `flatMapFirst` | `mvi/` — adopted from `mvi-search`, not reinvented | §2.8 |
+| Screen contract (State, Intent, Effect) | `ui/calendar/CalendarContract.kt` | §5.1 |
+| Results + reducer | `ui/calendar/CalendarReducer.kt` | §4.2, §5.2 |
+| Repository boundary | `domain/WorkoutRepository.kt` | §2.3 |
+| Error taxonomy | `data/DataError.kt` | §2.7 |
+| Persisted shape | `data/local/entity/` | §3.2 |
+| Week rule | `domain/WeekProvider.kt` | §4.1 |
+| Status rule | `domain/StatusResolver.kt` | §4.2 |
 
 ## 1. Technology choices
 
@@ -117,44 +109,11 @@ maps 1:1 onto a module.
 
 ### 2.2 Package structure
 
-Target shape, indicative rather than exhaustive — the decision is the *grouping*
-and the direction of dependencies, not the file list:
+Five packages: `mvi/` (the store), `ui/` (Compose + contract + reducer),
+`domain/` (rules, no framework types), `data/` (Ktor, Room, mappers), `di/`.
 
-```
-com.example.everfit.assignment
-├── EverfitApplication.kt          Application; owns the DI container
-├── di/
-│   └── AppModule.kt               Koin module (§2.5)
-├── mvi/
-│   ├── MviViewModel.kt            Store: I/R/S/E, sync region, effects
-│   └── FlowOperators.kt           flatMapFirst
-├── ui/
-│   ├── MainActivity.kt
-│   ├── theme/                     Colour, type, shape tokens from Figma
-│   ├── calendar/
-│   │   ├── CalendarContract.kt    State, Intent, Effect, UI models (public)
-│   │   ├── CalendarReducer.kt     Result + reduceCalendar (internal, pure)
-│   │   ├── CalendarViewModel.kt   Pipelines only — cannot write state
-│   │   ├── CalendarScreen.kt      Takes (state, onIntent)
-│   │   └── components/            DayCell, WorkoutCell, StatusIndicator
-│   └── mapper/
-│       └── UiMappers.kt           Domain -> UI model
-├── domain/
-│   ├── model/                     WorkoutAssignment, StoredStatus, DisplayStatus, WeekDay
-│   ├── WeekProvider.kt            Clock -> Mon..Sun dates
-│   └── StatusResolver.kt          (stored, override, position) -> DisplayStatus
-└── data/
-    ├── remote/
-    │   ├── WorkoutApi.kt          Ktor client
-    │   └── dto/                   WorkoutsResponseDto, DayDto, AssignmentDto
-    ├── local/
-    │   ├── EverfitDatabase.kt
-    │   ├── entity/                WorkoutAssignmentEntity, CompletionOverrideEntity
-    │   └── dao/                   WorkoutDao, CompletionDao
-    ├── mapper/
-    │   └── DataMappers.kt         DTO -> Entity, Entity -> Domain
-    └── WorkoutRepositoryImpl.kt
-```
+File-level detail is in the source map above — repeating it as a tree would
+give two places to update and one of them would be wrong.
 
 ### 2.3 Layer contracts
 
@@ -165,21 +124,12 @@ com.example.everfit.assignment
 | `data` | `domain` | Compose, ViewModel |
 
 The rule that matters: **`domain` imports nothing.** No `android.*`, no Room,
-no Ktor, not even `Context`. That is what makes §6's "no device, no
-Robolectric" column true — every rule in §4 runs as a plain JVM test in
-milliseconds.
+no Ktor, not even `Context`. That is what makes the JVM-only test story real.
 
-The repository interface lives in `domain`, its implementation in `data`, so
-the dependency arrow points inward at the boundary that would otherwise invert:
-
-```kotlin
-// domain
-interface WorkoutRepository {
-    fun observeWeek(): Flow<List<WorkoutAssignment>>
-    suspend fun refresh(): Result<Unit>
-    suspend fun toggleCompletion(assignmentId: String)
-}
-```
+`WorkoutRepository` is declared in `domain` and implemented in `data`, so the
+arrow points inward at the boundary that would otherwise invert. Three methods:
+observe the week as a `Flow`, refresh (returning success or `DataError`), and
+toggle a completion by id.
 
 ### 2.4 The model chain
 
@@ -256,23 +206,20 @@ error. Mitigated by a `verify()` test (see `testing.md`).
 
 ### 2.7 Error model
 
-Typed at the boundary, not thrown across it:
+Typed at the boundary, not thrown across it. `DataError` cases:
 
-```kotlin
-sealed interface DataError {
-    data object Network : DataError      // no connectivity, timeout
-    data object Server : DataError       // non-2xx
-    data object Parsing : DataError      // malformed body
-    data class Unknown(val cause: Throwable) : DataError
-}
-```
+| Case | Means |
+|---|---|
+| `Network` | No connectivity, timeout |
+| `Server` | Non-2xx |
+| `Parsing` | Malformed body |
+| `Unknown` | Anything else, carrying the cause |
 
-Ktor and kotlinx.serialization exceptions are caught in `WorkoutApi` and mapped
-to `DataError`. Nothing above `data` sees a library exception type, so swapping
-Ktor for anything else touches one file.
+Ktor and serialization exceptions are caught in `WorkoutApi` and mapped. Nothing
+above `data` sees a library exception type, so replacing Ktor touches one file.
 
-Errors are **non-fatal by design**: `refresh()` returning a failure sets
-`error` in UI state and leaves cached content untouched (rung 3.4).
+Errors are **non-fatal by design**: a failed refresh sets `load = Failed` and
+leaves cached content untouched (rung 3.4).
 
 ### 2.8 UI architecture — MVI
 
@@ -426,78 +373,51 @@ error.
 
 ### 5.1 Screen state
 
+Declared in `ui/calendar/CalendarContract.kt`.
+
+| Field | Purpose |
+|---|---|
+| `weekDates` | Seven dates, from `WeekProvider` **at construction** — never from the network |
+| `days` | Content |
+| `load` | Status: `Idle` · `Refreshing` · `Failed(message)` — orthogonal to content |
+
+Derived, never stored:
+
+| Property | Definition |
+|---|---|
+| `showsFullScreenError` | `load is Failed` **and** every day empty |
+| `isRefreshing` | `load is Refreshing` |
+
+`weekDates` being populated synchronously is what makes the brief's loading
+requirement — correct dates, empty data — fall out rather than be retrofitted.
+
+**Revision.** This previously specified flat `isLoading: Boolean` +
+`error: ErrorType?`, rejecting a sealed type because a failed refresh over good
+cache is both content-bearing and errored. That rejected the wrong thing: what
+fails is collapsing *content and status into one* hierarchy. Separate `days` and
+`load` fields express the awkward case exactly, while making
+`Refreshing && Failed` unrepresentable — which two booleans cannot.
+
+### 5.2 Sequences
+
 ```
-CalendarState(
-    weekDates: List<LocalDate>,   // always present, even while loading
-    days: List<DayUiModel>,       // content
-    load: Load,                   // status, orthogonal to content
-)
-
-sealed interface Load { Idle; Refreshing; Failed(message) }
-```
-
-Derived, never stored — computing them removes the risk of a stale copy:
-
-```
-showsFullScreenError = load is Failed && days.all { it.workouts.isEmpty() }
-isRefreshing         = load is Refreshing
-```
-
-`weekDates` is populated synchronously from `WeekProvider` at construction,
-never from the network. That is what makes the brief's loading requirement —
-correct dates, empty data — fall out rather than be retrofitted.
-
-**Revision.** This section previously argued for flat `isLoading: Boolean` plus
-`error: ErrorType?`, on the grounds that a failed refresh over good cache is
-simultaneously content-bearing and errored, which a sealed
-`Loading | Content | Error` hierarchy cannot express.
-
-That reasoning rejected the wrong thing. What fails is collapsing *content and
-status into one* hierarchy. Keeping `days` and `load` as **separate fields**,
-with `load` sealed, expresses the awkward case exactly — `Load.Failed` alongside
-a populated `days` — while still making `Refreshing && Failed` unrepresentable.
-Two booleans cannot do that; they permit illegal combinations that then need a
-test to rule out.
-
-### 5.2 Walkthroughs
-
-Each sequence as Intent → Result → State.
-
-**Cold start — empty cache**
-```
-(init)              -> WeekProvider              State(weekDates, days=[], Idle)
-Room Flow emits []  -> CachedLoaded([])          unchanged
-Refresh             -> RefreshStarted            load = Refreshing
-                    -> RefreshSucceeded          load = Idle
-Room Flow re-emits  -> CachedLoaded(days)        days populated
+                    ┌──────────────── Room Flow ──────────────┐
+                    │                                          ▼
+Screen ─onIntent─> pipelines ─Result─> reduce(S,R) ─> StateFlow ─> Screen
+                       │                    │
+                    Ktor/DAO            effectFor ─> Channel<E>
 ```
 
-**Warm start — populated cache**
-```
-Room Flow emits     -> CachedLoaded(days)        content, immediately
-Refresh (background)-> RefreshStarted/Succeeded  load only; days untouched
-```
-Nothing awaits the network before first render.
+| Sequence | Results, in order | Net effect |
+|---|---|---|
+| **Cold start** | `CachedLoaded([])` · `RefreshStarted` · `RefreshSucceeded` · `CachedLoaded(days)` | Dates first, then content |
+| **Warm start** | `CachedLoaded(days)` · `RefreshStarted` · `RefreshSucceeded` | Content before any network call |
+| **Toggle** | *(write)* · `CachedLoaded(days)` | Checkmark; no Result of its own |
+| **Refresh fails** | `RefreshStarted` · `RefreshFailed` | `load = Failed`, `days` untouched, snackbar |
 
-**Toggle completion**
-```
-ToggleCompletion(id) -> upsert completion_overrides   (assignments untouched)
-                     -> Room re-emits -> CachedLoaded  checkmark appears
-```
-The toggle produces no state-changing Result of its own — Room is the source of
-truth, so the write returns through the cache pipeline. Two writes touch
-different tables, so a concurrent refresh cannot race it.
-
-**Refresh fails over good cache**
-```
-Refresh -> RefreshStarted            load = Refreshing
-        -> RefreshFailed(message)    load = Failed; days untouched
-                                     effectFor -> ShowSnackbar
-```
-The reducer never clears `days`, so this holds by construction. A full-screen
-error is *state* (`showsFullScreenError`); a failed refresh over usable content
-is a one-shot *effect* — the same split the reference implementation makes
-between a failed search and a failed page load.
+Two properties fall out of the reducer rather than being enforced by care: no
+branch clears `days` on failure (rung 3.4), and the toggle writes a different
+table from refresh, so they cannot race (rung 5.5).
 
 ## 6. Testing strategy
 
