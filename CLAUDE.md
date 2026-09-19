@@ -1,7 +1,15 @@
 # CLAUDE.md
 
-Android training-calendar app. Design record: [`docs/sdlc/spec.md`](docs/sdlc/spec.md).
-Work breakdown: [`docs/sdlc/intents/`](docs/sdlc/intents/).
+Android training-calendar app.
+
+**Start with [`docs/sdlc/WORKFLOW.md`](docs/sdlc/WORKFLOW.md)** — the loop, the
+reading order, and current status. This file is rules only; it does not tell you
+what to do next.
+
+Design record: [`spec.md`](docs/sdlc/spec.md) ·
+Tests: [`testing.md`](docs/sdlc/testing.md) ·
+Rungs: [`intents/`](docs/sdlc/intents/) ·
+Drills: [`plans/`](docs/sdlc/plans/)
 
 ## Commands
 

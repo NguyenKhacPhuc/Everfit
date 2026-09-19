@@ -8,12 +8,14 @@ the intent, the spec, the plan and the diff together form the audit trail.
 
 ## Scope
 
+**Working here? Start with [`WORKFLOW.md`](WORKFLOW.md)**, not this file.
+
 | Stage | Status | Artifact |
 |---|---|---|
-| 1. Plan | Active | [`intent.md`](intent.md) + [`intents/`](intents/) |
-| 2. Design | Pending | `spec.md` |
-| 3. Build | Pending | `plan.md` per intent, `CLAUDE.md` at repo root |
-| 4. Test | Pending | Single-command feedback loop, on-device verification |
+| 1. Plan | ✅ Complete | [`intent.md`](intent.md) + [`intents/`](intents/) |
+| 2. Design | ✅ Complete | [`spec.md`](spec.md), [`testing.md`](testing.md) |
+| 3. Build | Awaiting drill approval | [`plans/`](plans/), `CLAUDE.md` |
+| 4. Test | Not started | Single-command gate, on-device verification |
 | 5. Deploy | **Dropped** | Deliberate — see below |
 | 6. Maintain | **Dropped** | Deliberate — see below |
 
