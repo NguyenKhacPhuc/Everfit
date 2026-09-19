@@ -9,8 +9,8 @@ import com.example.everfit.assignment.data.local.entity.CompletionOverrideEntity
 import com.example.everfit.assignment.data.local.entity.WorkoutAssignmentEntity
 import com.example.everfit.assignment.data.local.entity.WorkoutWithOverride
 import com.example.everfit.assignment.domain.WorkoutRemoteSource
-import com.example.everfit.assignment.domain.model.StoredStatus
-import com.example.everfit.assignment.domain.model.WorkoutAssignment
+import com.example.everfit.assignment.model.StoredStatus
+import com.example.everfit.assignment.model.WorkoutAssignment
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async

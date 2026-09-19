@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.domain.model
+package com.example.everfit.assignment.model
 
 /**
  * The `status` field as the API sends it.

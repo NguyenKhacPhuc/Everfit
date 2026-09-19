@@ -1,8 +1,8 @@
 package com.example.everfit.assignment.domain
 
-import com.example.everfit.assignment.domain.model.DayPosition
-import com.example.everfit.assignment.domain.model.DisplayStatus
-import com.example.everfit.assignment.domain.model.StoredStatus
+import com.example.everfit.assignment.model.DayPosition
+import com.example.everfit.assignment.model.DisplayStatus
+import com.example.everfit.assignment.model.StoredStatus
 
 /**
  * Two steps, deliberately separate.

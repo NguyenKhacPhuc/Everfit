@@ -7,7 +7,7 @@ with their status, and lets you mark a workout complete locally.
 |---|---|
 | **Video walkthrough** | _TODO: paste Loom link here before submitting_ |
 | **Design** | [Figma](https://www.figma.com/design/APChc5i8CKTSn7CZg7Gg36/Everfit?node-id=23776-49540) · exports in [`docs/design/`](docs/design/) |
-| **Tests** | 53 JVM unit tests |
+| **Tests** | 58 JVM unit tests — no emulator required |
 
 ## Build and run
 
@@ -83,7 +83,7 @@ unrepresentable.
 
 ### Testing
 
-53 JVM tests, no emulator required — the domain layer imports no Android types.
+58 JVM tests, no emulator required — the domain layer imports no Android types.
 
 - **Tier 1 (reducer, domain rules, parsing):** plain function calls. No
   dispatcher, no fakes, no `runTest`.
@@ -100,6 +100,17 @@ Two tests are load-bearing and were each written to fail first:
 
 Tests read a committed capture of the API ([`workouts.json`](app/src/test/resources/workouts.json)),
 never the live endpoint, so a third party being down cannot turn the suite red.
+
+**No instrumented tests, by decision.** The architecture pushes almost everything
+into Tier 1, so an emulator suite would add narrow value — that Room's generated
+SQL matches its annotations, and that composables emit what their previews
+already show — while making the gate too slow to run after every change. Those
+areas were verified on a device instead: a completion mark surviving both an app
+restart *and* a refresh reporting the opposite status, and the loading/crossfade
+behaviour checked by extracting frames from a screen recording. The gap this
+leaves is that nothing automated would catch a Room schema change breaking the
+query, or a visual regression — on a longer-lived codebase both are worth an
+emulator in CI. Reasoning in [`docs/sdlc/testing.md`](docs/sdlc/testing.md).
 
 ## Findings in the brief
 

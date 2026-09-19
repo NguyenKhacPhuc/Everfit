@@ -22,10 +22,35 @@ Reserved for what Tier 1 cannot reach: pipeline behaviour — that a double
 `Refresh` starts one refresh (`flatMapFirst`), that two rapid toggles both land
 (`flatMapConcat`), that effects fire in order with the state that caused them.
 
-**Tier 3 — instrumented.** DAOs and Compose.
+**Tier 3 — instrumented.** DAOs and Compose. **Deliberately not written** — see
+*Scope* below.
 
 The point of the split: a rule tested at Tier 1 costs nothing to run and cannot
 flake. Pushing logic into the reducer is therefore also a testing decision.
+
+## Scope: no instrumented tests
+
+Instrumented tests (Room DAOs, Compose UI, screenshot comparison) are out of
+scope by decision, not by omission.
+
+The reasoning: the architecture pushes almost everything reachable into Tier 1,
+so what an instrumented suite would add here is narrow — that Room's generated
+SQL matches the DAO annotations, and that composables emit what their previews
+already show. Meanwhile it costs an emulator in the loop, which makes the gate
+too slow to run after every change.
+
+What replaces it, and why that is defensible for this app:
+
+| Would have been instrumented | Covered instead by |
+|---|---|
+| DAO reads/writes, the LEFT JOIN merge | Repository tests over fake DAOs, plus on-device verification that a completion survives restart **and** a contradicting refresh |
+| Compose rendering per state | Previews for every state the sealed contract allows, plus device screenshots compared against the design exports |
+| Loading and crossfade behaviour | A device screen recording, frames extracted and sampled |
+
+The gap this leaves, stated plainly: nothing automated would catch a Room schema
+change that breaks the query, or a visual regression. On a longer-lived codebase
+both are worth an emulator in CI. On a single-screen app delivered in a day,
+device verification of the specific guarantees was the better use of the time.
 
 ## Where tests run
 
@@ -42,15 +67,14 @@ everything is a plain JVM test, so the suite runs in seconds with no emulator.
 | `WorkoutRepositoryImpl` | JVM unit, fake DAOs | No |
 | `CalendarViewModel` | **Tier 2** — fake repo + `MainDispatcherRule` | No |
 | Koin graph | JVM unit, `verify()` | No |
-| DAO / migrations | Instrumented, in-memory Room | Yes |
-| Composables | Instrumented, Compose UI test | Yes |
-| Visual fidelity | Screenshot vs design | Yes |
+| DAO / migrations | *(not automated — see Scope)* | — |
+| Composables | Previews + device screenshots | — |
+| Visual fidelity | Device screenshot vs design export | — |
 
 ## Libraries
 
-`junit4`, `kotlinx-coroutines-test` (`runTest`, `StandardTestDispatcher`),
-`turbine` (Flow assertions), `ktor-client-mock`, `koin-test`,
-`androidx.room:room-testing`, `androidx.compose.ui:ui-test-junit4`.
+`junit4`, `kotlin-test-junit`, `kotlinx-coroutines-test` (`runTest`,
+`StandardTestDispatcher`), `turbine` (Flow assertions), `ktor-client-mock`.
 
 JUnit 4, not 5: `androidx.test` rules and `createComposeRule()` are JUnit4-based,
 and JUnit 5 does not run instrumented tests at all, so adopting it would mean
@@ -77,10 +101,9 @@ fun longWorkoutTitleTruncatesWithEllipsis() { }
 Backtick sentences describing behaviour, so a failure name explains the broken
 rule without opening the file.
 
-**Instrumented tests are the exception.** Method names containing spaces were
-rejected by the platform before API 30, and minSdk here is 24 — a backtick name
-in `src/androidTest` fails on exactly the older devices the app supports. Those
-use camelCase. See Drill 00 §6.
+(Backtick names are safe here because every test is a JVM test. They fail in
+`src/androidTest` below API 30, which would have mattered had instrumented tests
+been in scope — see Drill 00 §6.)
 
 ## The matrices
 
@@ -213,7 +236,5 @@ percentage would reward testing the list above.
 any failure. That single command is the feedback loop — an agent or a CI step
 can verify its own work without interpreting output.
 
-Instrumented tests are **not** in the gate: they need a device and would make
-the loop too slow to run after every change. They run before a rung involving
-UI is marked done.
+There are no instrumented tests, so the gate is the whole automated suite.
 

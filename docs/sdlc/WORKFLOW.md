@@ -129,7 +129,7 @@ applied from `training.png`. Status enum **corrected**: `0=ASSIGNED, 1=MISSED,
 | 00 Foundation | ✅ APPROVED | **0.1–0.6 ✅ complete** |
 | 01 Week grid | ✅ APPROVED | **1.1–1.4 ✅ complete** |
 | 02 Data layer | ✅ APPROVED | **2.1–2.5 ✅ complete** |
-| 03 Local cache | ✅ APPROVED | **3.2–3.5 ✅** · 3.1 instrumented test outstanding |
+| 03 Local cache | ✅ APPROVED | **3.1–3.5 ✅** (3.1 verified on device; no instrumented suite) |
 | 04 Cell UI | ✅ APPROVED | **4.1–4.5 ✅ complete** |
 | 05 Toggle | ✅ APPROVED | **5.1–5.6 ✅** (verified on device) |
 | 06 Submission | ✅ APPROVED | **6.1–6.4 ✅** · 6.5 repo public, 6.6 video outstanding |
@@ -137,7 +137,7 @@ applied from `training.png`. Status enum **corrected**: `0=ASSIGNED, 1=MISSED,
 
 **All seven drills APPROVED 2026-09-19. Deadline **2026-09-20 10:44 +07**.**
 
-**Next: rung 3.1** (instrumented DAO test) and **Intent 06** (README, AI Collaboration notes, public repo, video).
+**Next: submission.** `main` still holds only the scaffold, the repo is private, and the video is outstanding.
 
 **No blockers.** Design exports are in `docs/design/`; both open questions are
 resolved.

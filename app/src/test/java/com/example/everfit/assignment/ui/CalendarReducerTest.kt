@@ -1,6 +1,6 @@
 package com.example.everfit.assignment.ui
 
-import com.example.everfit.assignment.domain.model.DisplayStatus
+import com.example.everfit.assignment.model.DisplayStatus
 import com.example.everfit.assignment.ui.calendar.CalendarResult
 import com.example.everfit.assignment.ui.calendar.CalendarState
 import com.example.everfit.assignment.ui.calendar.DayUiModel

@@ -6,7 +6,7 @@ import com.example.everfit.assignment.data.base.toResult
 import com.example.everfit.assignment.data.mapper.toDomain
 import com.example.everfit.assignment.data.remote.dto.DayDto
 import com.example.everfit.assignment.domain.WorkoutRemoteSource
-import com.example.everfit.assignment.domain.model.WorkoutAssignment
+import com.example.everfit.assignment.model.WorkoutAssignment
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import kotlinx.coroutines.CancellationException

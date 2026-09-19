@@ -8,7 +8,7 @@ import com.example.everfit.assignment.data.mapper.toDomain
 import com.example.everfit.assignment.data.mapper.toEntity
 import com.example.everfit.assignment.domain.WorkoutRemoteSource
 import com.example.everfit.assignment.domain.WorkoutRepository
-import com.example.everfit.assignment.domain.model.WorkoutAssignment
+import com.example.everfit.assignment.model.WorkoutAssignment
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

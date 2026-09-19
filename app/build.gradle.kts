@@ -73,6 +73,4 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.koin.test.junit4)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }

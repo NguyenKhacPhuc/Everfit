@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.everfit.assignment.R
-import com.example.everfit.assignment.domain.model.DisplayStatus
+import com.example.everfit.assignment.model.DisplayStatus
 import com.example.everfit.assignment.ui.calendar.components.DayCell
 import com.example.everfit.assignment.ui.calendar.components.WorkoutCard
 import com.example.everfit.assignment.ui.calendar.components.WorkoutSkeleton

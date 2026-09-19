@@ -1,4 +1,4 @@
-package com.example.everfit.assignment.domain.model
+package com.example.everfit.assignment.model
 
 import com.example.everfit.assignment.domain.resolveCompletion
 

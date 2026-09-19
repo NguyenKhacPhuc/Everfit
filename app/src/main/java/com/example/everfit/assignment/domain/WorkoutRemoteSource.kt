@@ -1,7 +1,7 @@
 package com.example.everfit.assignment.domain
 
 import com.example.everfit.assignment.data.base.Result
-import com.example.everfit.assignment.domain.model.WorkoutAssignment
+import com.example.everfit.assignment.model.WorkoutAssignment
 
 /**
  * The network, as the repository sees it.

@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.everfit.assignment.R
-import com.example.everfit.assignment.domain.model.DisplayStatus
+import com.example.everfit.assignment.model.DisplayStatus
 import com.example.everfit.assignment.ui.calendar.WorkoutUiModel
 import com.example.everfit.assignment.ui.theme.EverfitTheme
 

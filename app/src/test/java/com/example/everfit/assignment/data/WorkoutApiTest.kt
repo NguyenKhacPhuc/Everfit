@@ -3,7 +3,7 @@ package com.example.everfit.assignment.data
 import com.example.everfit.assignment.data.base.Result
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.data.remote.WorkoutApi
-import com.example.everfit.assignment.domain.model.StoredStatus
+import com.example.everfit.assignment.model.StoredStatus
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond

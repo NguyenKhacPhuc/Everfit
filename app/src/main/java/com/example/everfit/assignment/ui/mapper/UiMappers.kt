@@ -1,7 +1,7 @@
 package com.example.everfit.assignment.ui.mapper
 
-import com.example.everfit.assignment.domain.model.DayPosition
-import com.example.everfit.assignment.domain.model.WorkoutAssignment
+import com.example.everfit.assignment.model.DayPosition
+import com.example.everfit.assignment.model.WorkoutAssignment
 import com.example.everfit.assignment.domain.resolveDisplay
 import com.example.everfit.assignment.ui.calendar.DayUiModel
 import com.example.everfit.assignment.ui.calendar.WorkoutUiModel

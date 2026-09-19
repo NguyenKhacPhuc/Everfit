@@ -1,7 +1,7 @@
 package com.example.everfit.assignment.ui.calendar
 
 import androidx.compose.runtime.Immutable
-import com.example.everfit.assignment.domain.model.DisplayStatus
+import com.example.everfit.assignment.model.DisplayStatus
 import java.time.LocalDate
 
 /**

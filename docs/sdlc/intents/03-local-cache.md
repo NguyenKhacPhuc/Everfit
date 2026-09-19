@@ -8,7 +8,7 @@ reconciles with the server.
 
 | Rung | Outcome | Verified by |
 |---|---|---|
-| 3.1 | Workouts persist across process death | Write, restart, read back |
+| 3.1 | Workouts persist across process death | ~~Instrumented test~~ → **verified on device**; instrumented tests out of scope (`testing.md`) |
 | 3.2 | Cold start (empty cache) shows loading, then content | Repository test |
 | 3.3 | Warm start emits cached content **before** any network call completes | Repository test asserting emission order |
 | 3.4 | A failed refresh leaves cached content on screen, not an error screen | Repository test with a failing source |
