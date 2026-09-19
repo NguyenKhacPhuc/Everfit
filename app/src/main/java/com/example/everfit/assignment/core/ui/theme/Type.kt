@@ -44,12 +44,14 @@ internal val EverfitTypography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.sp,
     ),
-    // Workout card title.
+    // Workout card title. line-height 100% in the spec, i.e. equal to the font
+    // size — a tight line box, which is fine because the title is single-line.
     titleMedium = TextStyle(
         fontFamily = OpenSans,
         fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
-        lineHeight = 22.sp,
+        fontSize = 15.sp,
+        lineHeight = 15.sp,
+        letterSpacing = 0.sp,
     ),
     // Workout card subtitle: status word and exercise count.
     bodyMedium = TextStyle(

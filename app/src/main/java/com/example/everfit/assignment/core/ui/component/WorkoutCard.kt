@@ -23,7 +23,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.everfit.assignment.R
@@ -75,8 +74,9 @@ fun WorkoutCard(
         ) {
             Text(
                 text = workout.title,
+                // Weight comes from the style; overriding it here would give the
+                // theme two sources of truth for the same property.
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
                 color = titleColour,
                 // The brief requires truncation with an ellipsis; the design keeps
                 // a title to one line.
