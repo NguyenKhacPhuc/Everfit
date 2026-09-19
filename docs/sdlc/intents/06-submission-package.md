@@ -37,6 +37,6 @@ readable narrative of how the app was constructed rather than one opaque drop.
 
 ## Worth mentioning in the README
 
-The two API-URL discrepancy and the undocumented status enum (see
+The unreachable second API URL and the undocumented status enum (see
 [`../intent.md`](../intent.md)) are findings, not complaints. Reporting them
 demonstrates the attention to detail the brief says it is assessing.

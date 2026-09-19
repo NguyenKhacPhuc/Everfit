@@ -32,27 +32,21 @@ drift between the brief and what gets built.
 | Constraint | Detail |
 |---|---|
 | Deadline | 24 hours from receipt |
-| Platform | Android (see *Known conflicts*) |
+| Platform | Android |
 | Fidelity | "Pixel-perfect" against the Figma design is assessment criterion #1 |
 | Authorship | All submitted code must be understood and explainable by the author |
 | Deliverables | Public repo, README with build instructions + AI Collaboration section, 3–5 min video walkthrough |
 
-## Known conflicts in the brief
+## Findings in the brief
 
-These are recorded here rather than silently resolved, and should be noted in
-the final README as evidence of attention to detail.
+Recorded rather than silently resolved, and worth noting in the final README as
+evidence of attention to detail.
 
-1. **Platform mismatch.** Every technical requirement names an Apple
-   technology (Swift Concurrency, Realm/CoreData/SwiftData, UIKit/SwiftUI,
-   MVVM-C), but this is an Android submission. The *product* requirements
-   translate directly; the *technical* ones are mapped to Android equivalents
-   in `spec.md`.
-
-2. **Two mock API URLs, one dead.**
+1. **Two mock API URLs, one dead.**
    - `https://mock.internalef.com/workouts` — live, returns valid JSON. **Use this.**
    - `http://demo6732818.mockable.io/workouts` — unreachable (connection failed).
 
-3. **Undocumented status enum.** The API returns `status` values `0`, `1`, `2`
+2. **Undocumented status enum.** The API returns `status` values `0`, `1`, `2`
    with no stated meaning. See `intents/02-workout-data-layer.md`.
 
 ## Open questions

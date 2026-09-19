@@ -65,8 +65,9 @@ Nothing technical. Pure deliverable.
 
 **Non-blocking but required before submission:**
 - Video hosting and link (Loom, or a screen recording uploaded somewhere)
-- Whether to note the two brief conflicts in the README — **lean yes**, it
-  demonstrates the attention to detail being graded
+- Whether to note the two API findings in the README (dead second URL,
+  undocumented status enum) — **lean yes**, it demonstrates the attention to
+  detail being graded
 - The end-to-end process bonus: the SDLC artefacts *are* the answer
 
 ## 9. Estimate

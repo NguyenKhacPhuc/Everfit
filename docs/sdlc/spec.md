@@ -48,29 +48,26 @@ Where code appears, it is the **contract** — a signature, a shape, a taxonomy.
 Blocks marked *illustrative* show intent only; the implementation is
 authoritative and no one should update this document when it changes.
 
-## 1. Platform mapping
+## 1. Technology choices
 
-The brief specifies iOS technologies; this is an Android submission. Each
-requirement is mapped to its closest Android equivalent, and the mapping itself
-is a deliverable — it should be stated in the README so the reviewer sees a
-deliberate translation rather than a spec that was ignored.
-
-| Brief (iOS) | This build (Android) | Why |
+| Concern | Choice | Why |
 |---|---|---|
-| SwiftUI / UIKit | **Jetpack Compose** | Declarative equivalent of SwiftUI; previews give the tight visual loop that pixel-perfect work needs |
-| async/await | **Coroutines + Flow** | Kotlin's structured concurrency; `suspend` is the direct analogue |
-| CoreData / SwiftData / Realm | **Room** | First-party relational store with an observable query API |
-| URLSession | **Ktor Client** | Kotlin-native, coroutine-first HTTP |
-| MVVM-C | **MVVM** | Single screen; a coordinator layer would be ceremony here |
-| (DI unspecified) | **Koin** | Runtime DSL, so no KSP or annotation processing (§2.5) |
+| UI | **Jetpack Compose** | Declarative; previews give the tight visual loop that pixel-perfect work needs |
+| Concurrency | **Coroutines + Flow** | Structured concurrency; `suspend` at every async boundary |
+| Persistence | **Room** | First-party relational store with an observable query API (fallback in Drill 03 §4) |
+| Networking | **Ktor Client** | Kotlin-native, coroutine-first HTTP |
+| Serialization | **kotlinx.serialization** | Ktor-native, no KSP (Drill 02 §2) |
+| DI | **Koin** | Runtime DSL, so no KSP or annotation processing (§2.5) |
+| Pattern | **MVVM** | Single screen; see §2.0 |
+| Dates | **`java.time` + desugaring** | minSdk 24 makes desugaring mandatory (Drill 01 §2) |
 
 ## 2. Architecture
 
 ### 2.0 What this architecture is, and what it is not
 
-The brief asks for "a modern, clean architecture that you are confident in
-(e.g., MVVM, MVVM-C)" — using *clean* in the ordinary sense of tidy and
-well-separated, not as a citation of a specific book.
+The brief asks for "a modern, clean architecture that you are confident in" —
+using *clean* in the ordinary sense of tidy and well-separated, not as a
+citation of a specific book.
 
 This build is therefore described precisely rather than branded:
 
