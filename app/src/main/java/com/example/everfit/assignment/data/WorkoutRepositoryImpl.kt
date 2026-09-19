@@ -1,6 +1,8 @@
 package com.example.everfit.assignment.data
 
 import com.example.everfit.assignment.data.base.Result
+import com.example.everfit.assignment.data.base.asResult
+import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.data.local.dao.CompletionDao
 import com.example.everfit.assignment.data.local.dao.WorkoutDao
 import com.example.everfit.assignment.data.local.entity.CompletionOverrideEntity
@@ -11,6 +13,8 @@ import com.example.everfit.assignment.domain.WorkoutRepository
 import com.example.everfit.assignment.model.WorkoutAssignment
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
@@ -33,7 +37,17 @@ class WorkoutRepositoryImpl(
         workoutDao.observeAll().map { rows -> rows.map { it.toDomain() } }
 
     override suspend fun refresh(): Result<Unit> = withContext(ioDispatcher) {
-        when (val fetched = remote.fetchWorkouts()) {
+        // asResult() types the failure once, here, rather than in the API class.
+        // firstOrNull, not first: safeApiCall swallows an unparseable response
+        // shape and completes without emitting, and `first()` would turn that
+        // into a NoSuchElementException instead of a reportable error.
+        val fetched = remote.fetchWorkouts()
+            .asResult()
+            .filterNot { it is Result.Loading }
+            .firstOrNull()
+            ?: Result.Error(ApiError.UNKNOWN, "empty response")
+
+        when (fetched) {
             is Result.Success -> {
                 // Writes workout_assignments ONLY. completion_overrides is never
                 // touched here, which is what stops a refresh reverting a local

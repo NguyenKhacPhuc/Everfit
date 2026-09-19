@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runCurrent
@@ -73,14 +74,16 @@ class WorkoutRepositoryTest {
 
     /** A source the test can hold open. That is the whole point — see [warmStartEmitsCacheBeforeTheNetworkReturns]. */
     private class FakeRemote : WorkoutRemoteSource {
-        var result: Result<List<WorkoutAssignment>> = Result.Success(emptyList())
+        var items: List<WorkoutAssignment> = emptyList()
+        var failure: Exception? = null
         var gate: CompletableDeferred<Unit>? = null
         var calls = 0
 
-        override suspend fun fetchWorkouts(): Result<List<WorkoutAssignment>> {
+        override fun fetchWorkouts(): Flow<List<WorkoutAssignment>> = flow {
             calls++
             gate?.await()
-            return result
+            failure?.let { throw it }
+            emit(items)
         }
     }
 
@@ -103,7 +106,7 @@ class WorkoutRepositoryTest {
     @Test
     fun `cold start is empty then populated after a refresh`() = runTest {
         val dao = FakeWorkoutDao()
-        val remote = FakeRemote().apply { result = Result.Success(listOf(assignment("a", 0))) }
+        val remote = FakeRemote().apply { items = listOf(assignment("a", 0)) }
         val repo = repository(dao, remote)
 
         repo.observeWeek().test {
@@ -130,7 +133,7 @@ class WorkoutRepositoryTest {
         val gate = CompletableDeferred<Unit>()
         val remote = FakeRemote().apply {
             this.gate = gate
-            result = Result.Success(listOf(assignment("fresh", 2)))
+            items = listOf(assignment("fresh", 2))
         }
         val repo = repository(dao, remote)
 
@@ -159,7 +162,7 @@ class WorkoutRepositoryTest {
     @Test
     fun `a failed refresh keeps cached content and reports the error`() = runTest {
         val dao = FakeWorkoutDao().apply { assignments.value = listOf(entity("cached", 1)) }
-        val remote = FakeRemote().apply { result = Result.Error(ApiError.NETWORK, "offline") }
+        val remote = FakeRemote().apply { failure = java.net.UnknownHostException("offline") }
         val repo = repository(dao, remote)
 
         repo.observeWeek().test {
@@ -185,7 +188,7 @@ class WorkoutRepositoryTest {
 
         repo.toggleCompletion("a")
         // Server still insists the workout is merely assigned.
-        remote.result = Result.Success(listOf(assignment("a", 0, StoredStatus.ASSIGNED)))
+        remote.items = listOf(assignment("a", 0, StoredStatus.ASSIGNED))
         repo.refresh()
 
         repo.observeWeek().test {

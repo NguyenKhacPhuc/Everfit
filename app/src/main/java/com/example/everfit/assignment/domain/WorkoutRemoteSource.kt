@@ -1,15 +1,18 @@
 package com.example.everfit.assignment.domain
 
-import com.example.everfit.assignment.data.base.Result
 import com.example.everfit.assignment.model.WorkoutAssignment
+import kotlinx.coroutines.flow.Flow
 
 /**
  * The network, as the repository sees it.
  *
- * Exists so the repository can be tested on the JVM against a source the test
- * controls — specifically one that can be held open, which is the only way to
- * prove cache emits *before* the network returns rather than merely alongside it.
+ * A cold [Flow] rather than a suspend function, matching the shared
+ * safeApiCall/asResult idiom: failures travel as exceptions and are typed once,
+ * at the collecting end.
+ *
+ * It also stays testable in the way rung 3.3 needs — a fake can hold the flow
+ * open, which is the only way to prove cache emits *before* the network returns.
  */
 interface WorkoutRemoteSource {
-    suspend fun fetchWorkouts(): Result<List<WorkoutAssignment>>
+    fun fetchWorkouts(): Flow<List<WorkoutAssignment>>
 }

@@ -34,6 +34,10 @@ val appModule = module {
 
     single {
         HttpClient(OkHttp) {
+            // Required by the safeApiCall/asResult idiom: Ktor must throw on a
+            // non-2xx so Exception.toResult() can type it. Without this a 500
+            // body reaches the deserializer and surfaces as a parsing failure.
+            expectSuccess = true
             install(ContentNegotiation) { json(JsonHelper.json) }
         }
     }

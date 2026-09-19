@@ -38,7 +38,9 @@ suspend fun Exception?.toResult(): Result.Error {
             is ClientRequestException, is ServerResponseException -> {
                 val error = JsonHelper.toObject<ErrorModel>(this.response.bodyAsText())
                 if (null == error) {
-                    Result.Error(ApiError.UNKNOWN, "", this)
+                    // Keep the HTTP status rather than collapsing to UNKNOWN: a
+                    // 500 with a non-JSON body still tells the caller something.
+                    Result.Error(this.response.status.value, "", this)
                 } else {
                     Result.Error(error.code, error.message, this)
                 }
