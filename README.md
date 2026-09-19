@@ -5,7 +5,7 @@ with their status, and lets you mark a workout complete locally.
 
 | | |
 |---|---|
-| **Video walkthrough** | _TODO: paste Loom link here before submitting_ |
+| **Video walkthrough** | [Watch (4 min)](https://drive.google.com/file/d/12o4v8Sqv-My0xsBSauT60NYmf-dz9Zfi/view?usp=sharing) |
 | **Design** | [Figma](https://www.figma.com/design/APChc5i8CKTSn7CZg7Gg36/Everfit?node-id=23776-49540) · exports in [`docs/design/`](docs/design/) |
 | **Tests** | 58 JVM unit tests — no emulator required |
 
