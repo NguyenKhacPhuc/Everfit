@@ -4,8 +4,8 @@ import com.example.everfit.assignment.data.mapper.toDomain
 import com.example.everfit.assignment.data.network.service.getBaseResponse
 import com.example.everfit.assignment.data.network.service.safeApiCall
 import com.example.everfit.assignment.data.remote.dto.DayDto
-import com.example.everfit.assignment.domain.WorkoutRemoteSource
-import com.example.everfit.assignment.model.WorkoutAssignment
+import com.example.everfit.assignment.core.domain.WorkoutRemoteSource
+import com.example.everfit.assignment.core.model.WorkoutAssignment
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

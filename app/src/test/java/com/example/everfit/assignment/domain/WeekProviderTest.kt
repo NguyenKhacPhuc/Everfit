@@ -1,5 +1,6 @@
 package com.example.everfit.assignment.domain
 
+import com.example.everfit.assignment.core.domain.WeekProvider
 import java.time.Clock
 import java.time.DayOfWeek
 import java.time.Instant

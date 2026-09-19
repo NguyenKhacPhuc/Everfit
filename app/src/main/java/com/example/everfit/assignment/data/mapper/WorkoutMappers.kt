@@ -3,8 +3,8 @@ package com.example.everfit.assignment.data.mapper
 import com.example.everfit.assignment.data.local.entity.WorkoutAssignmentEntity
 import com.example.everfit.assignment.data.local.entity.WorkoutWithOverride
 import com.example.everfit.assignment.data.remote.dto.DayDto
-import com.example.everfit.assignment.model.StoredStatus
-import com.example.everfit.assignment.model.WorkoutAssignment
+import com.example.everfit.assignment.core.model.StoredStatus
+import com.example.everfit.assignment.core.model.WorkoutAssignment
 
 /**
  * Wire -> domain. One direction, at the boundary it crosses.

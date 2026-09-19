@@ -3,10 +3,10 @@ package com.example.everfit.assignment.di
 import com.example.everfit.assignment.data.WorkoutRepositoryImpl
 import com.example.everfit.assignment.data.local.EverfitDatabase
 import com.example.everfit.assignment.data.remote.WorkoutApi
-import com.example.everfit.assignment.domain.WeekProvider
-import com.example.everfit.assignment.domain.WorkoutRemoteSource
-import com.example.everfit.assignment.domain.WorkoutRepository
-import com.example.everfit.assignment.ext.json.JsonHelper
+import com.example.everfit.assignment.core.domain.WeekProvider
+import com.example.everfit.assignment.core.domain.WorkoutRemoteSource
+import com.example.everfit.assignment.core.domain.WorkoutRepository
+import com.example.everfit.assignment.core.ext.json.JsonHelper
 import com.example.everfit.assignment.ui.calendar.CalendarViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp

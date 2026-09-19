@@ -1,8 +1,10 @@
 package com.example.everfit.assignment.domain
 
-import com.example.everfit.assignment.model.DayPosition
-import com.example.everfit.assignment.model.DisplayStatus
-import com.example.everfit.assignment.model.StoredStatus
+import com.example.everfit.assignment.core.domain.resolveCompletion
+import com.example.everfit.assignment.core.domain.resolveDisplay
+import com.example.everfit.assignment.core.model.DayPosition
+import com.example.everfit.assignment.core.model.DisplayStatus
+import com.example.everfit.assignment.core.model.StoredStatus
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

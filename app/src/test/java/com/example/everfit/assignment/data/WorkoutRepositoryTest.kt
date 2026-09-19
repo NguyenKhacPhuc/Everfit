@@ -1,16 +1,16 @@
 package com.example.everfit.assignment.data
 
 import app.cash.turbine.test
-import com.example.everfit.assignment.data.base.Result
+import com.example.everfit.assignment.core.Result
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.data.local.dao.CompletionDao
 import com.example.everfit.assignment.data.local.dao.WorkoutDao
 import com.example.everfit.assignment.data.local.entity.CompletionOverrideEntity
 import com.example.everfit.assignment.data.local.entity.WorkoutAssignmentEntity
 import com.example.everfit.assignment.data.local.entity.WorkoutWithOverride
-import com.example.everfit.assignment.domain.WorkoutRemoteSource
-import com.example.everfit.assignment.model.StoredStatus
-import com.example.everfit.assignment.model.WorkoutAssignment
+import com.example.everfit.assignment.core.domain.WorkoutRemoteSource
+import com.example.everfit.assignment.core.model.StoredStatus
+import com.example.everfit.assignment.core.model.WorkoutAssignment
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async

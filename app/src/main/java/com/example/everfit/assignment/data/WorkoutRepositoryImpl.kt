@@ -1,16 +1,16 @@
 package com.example.everfit.assignment.data
 
-import com.example.everfit.assignment.data.base.Result
-import com.example.everfit.assignment.data.base.asResult
+import com.example.everfit.assignment.core.Result
+import com.example.everfit.assignment.core.asResult
 import com.example.everfit.assignment.data.network.ApiError
 import com.example.everfit.assignment.data.local.dao.CompletionDao
 import com.example.everfit.assignment.data.local.dao.WorkoutDao
 import com.example.everfit.assignment.data.local.entity.CompletionOverrideEntity
 import com.example.everfit.assignment.data.mapper.toDomain
 import com.example.everfit.assignment.data.mapper.toEntity
-import com.example.everfit.assignment.domain.WorkoutRemoteSource
-import com.example.everfit.assignment.domain.WorkoutRepository
-import com.example.everfit.assignment.model.WorkoutAssignment
+import com.example.everfit.assignment.core.domain.WorkoutRemoteSource
+import com.example.everfit.assignment.core.domain.WorkoutRepository
+import com.example.everfit.assignment.core.model.WorkoutAssignment
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNot
