@@ -102,13 +102,21 @@ The gate exists for the moment when continuing feels faster than asking.
 Stages 1 (Plan) and 2 (Design) complete. Stage 3 in progress.
 
 **Intent 00 done.** Compose + Koin + Ktor + Room wired, design-system tokens in
-place, 4 JVM tests green, gate proven to fail (exit 1 on a broken test), app
-verified launching on `emulator-5554`.
+place, gate proven to fail (exit 1 on a broken test), app verified launching on
+`emulator-5554`.
+
+**Intent 01 done.** `WeekProvider` (10 tests, written red-first) plus the
+Mon–Sun grid with today highlighted, verified on device against the real date.
+**14 JVM tests green.**
+
+> **Open layout assumption:** the week is rendered as seven *rows*, not seven
+> columns, because the brief requires each day to hold multiple workout cards.
+> Confirm against the design before Intent 04.
 
 | Intent | Drill | Rungs |
 |---|---|---|
 | 00 Foundation | ✅ APPROVED | **0.1–0.6 ✅ complete** |
-| 01 Week grid | ✅ APPROVED | not started |
+| 01 Week grid | ✅ APPROVED | **1.1–1.4 ✅ complete** |
 | 02 Data layer | ✅ APPROVED | not started |
 | 03 Local cache | ✅ APPROVED | not started |
 | 04 Cell UI | ✅ APPROVED | not started |
@@ -117,7 +125,7 @@ verified launching on `emulator-5554`.
 
 **All seven drills APPROVED 2026-09-19. Deadline **2026-09-20 10:44 +07**.**
 
-**Next: Intent 01, rung 1.1** — `WeekProvider`, pure Kotlin, test-first.
+**Next: Intent 02, rung 2.1** — DTOs and parsing against the committed fixture, test-first.
 
 Open blockers: design PNGs (`docs/design/`) block rungs 1.4 and 4.1–4.5; the
 status enum meaning (spec §7) is settled by the same exports.
