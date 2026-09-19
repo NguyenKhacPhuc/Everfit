@@ -42,9 +42,6 @@ class MainActivity : ComponentActivity() {
                     snackbarHost = { SnackbarHost(snackbarHostState) },
                     containerColor = EverfitTheme.colors.screenBackground,
                 ) { innerPadding ->
-                    // Scaffold owns the system-bar insets so the snackbar sits
-                    // above the navigation bar; CalendarScreen stays inset-free,
-                    // which also lets its previews match the design exports.
                     CalendarScreen(
                         state = state,
                         onIntent = viewModel::onIntent,

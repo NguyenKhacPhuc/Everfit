@@ -83,7 +83,9 @@ private fun DayLabel(date: LocalDate, isToday: Boolean) {
         )
         Text(
             text = date.dayOfMonth.toString(),
-            style = MaterialTheme.typography.titleMedium,
+            // bodyLarge, not titleMedium: the day number is 16sp/400 per the
+            // design, while the card title at the same size is bold.
+            style = MaterialTheme.typography.bodyLarge,
             color = if (isToday) EverfitTheme.colors.accent
             else EverfitTheme.colors.textPrimary,
         )
