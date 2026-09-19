@@ -17,8 +17,46 @@ deliberate translation rather than a spec that was ignored.
 | CoreData / SwiftData / Realm | **Room** | First-party relational store with an observable query API |
 | URLSession | **Ktor Client** | Kotlin-native, coroutine-first HTTP |
 | MVVM-C | **MVVM** | Single screen; a coordinator layer would be ceremony here |
+| (DI unspecified) | **Koin** | Runtime DSL, so no KSP or annotation processing (§2.5) |
 
 ## 2. Architecture
+
+### 2.0 What this architecture is, and what it is not
+
+The brief asks for "a modern, clean architecture that you are confident in
+(e.g., MVVM, MVVM-C)" — using *clean* in the ordinary sense of tidy and
+well-separated, not as a citation of a specific book.
+
+This build is therefore described precisely rather than branded:
+
+> **Layered MVVM, applying the Clean Architecture dependency rule.**
+
+What is adopted from Clean Architecture:
+
+- **The dependency rule.** Source dependencies point inward only. `domain`
+  depends on nothing; `ui` and `data` both depend on `domain` (§2.3).
+- **Dependency inversion at the data boundary.** The `WorkoutRepository`
+  interface is owned by `domain`; `data` supplies the implementation. The
+  high-level policy does not depend on the low-level detail.
+- **Framework independence of business rules.** Week calculation and status
+  derivation are plain Kotlin, testable with no Android runtime (§6).
+
+What is deliberately **not** adopted:
+
+- **No use-case / interactor layer.** Canonical Clean Architecture routes every
+  operation through a single-method interactor. With three operations —
+  observe, refresh, toggle — that layer would be pass-through classes adding
+  indirection without adding a decision. The logic that *would* justify
+  interactors instead lives in two named domain services, `WeekProvider` and
+  `StatusResolver`, where it is directly testable.
+- **No entity/model duplication beyond §2.4.** Four representations are already
+  justified; a fifth for "enterprise business rules" would be ceremony.
+- **No module-per-layer split.** See §2.1.
+
+Stating this explicitly matters. Claiming "Clean Architecture" while omitting
+its defining structure invites exactly the follow-up question the brief warns
+about. Naming the parts adopted, and the parts skipped with reasons, is the
+more defensible position — and is the honest description of the code.
 
 ### 2.1 Module strategy
 
@@ -119,38 +157,43 @@ Mapping is one-directional and lives at the boundary it crosses:
 
 ### 2.5 Dependency injection
 
-**Manual constructor injection via a single `AppContainer`**, not Hilt.
+**Koin**, declared as a single module graph.
 
 ```kotlin
-class AppContainer(context: Context) {
-    private val database by lazy { EverfitDatabase.build(context) }
-    private val httpClient by lazy { HttpClient(/* ... */) }
-    private val api by lazy { WorkoutApi(httpClient) }
-
-    val clock: Clock = Clock.systemDefaultZone()
-    val workoutRepository: WorkoutRepository by lazy {
-        WorkoutRepositoryImpl(api, database.workoutDao(), database.completionDao(), ioDispatcher)
-    }
+val appModule = module {
+    single { EverfitDatabase.build(androidContext()) }
+    single { get<EverfitDatabase>().workoutDao() }
+    single { get<EverfitDatabase>().completionDao() }
+    single { HttpClient(/* ... */) }
+    single { WorkoutApi(get()) }
+    single<Clock> { Clock.systemDefaultZone() }
+    single<CoroutineDispatcher>(named("io")) { Dispatchers.IO }
+    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get(), get(named("io"))) }
+    viewModel { CalendarViewModel(get(), get()) }
 }
 ```
 
-Rationale, stated plainly because a reviewer may expect Hilt:
+Started in `EverfitApplication`; the screen resolves its state holder with
+`koinViewModel()`.
 
-- The graph is **six objects with no scoping beyond singleton**. Hilt's value
-  is managing graphs that outgrow comprehension; this one fits on a screen.
-- Hilt adds KSP, two Gradle plugins and annotation processing to a toolchain
-  already on a brand-new AGP 9.1.1. That is a real schedule risk for zero
-  architectural gain at this size.
-- Every class already takes its dependencies through its constructor, which is
-  what makes the tests in §6 possible. Migrating to Hilt is then mechanical —
-  annotate and delete `AppContainer`. Constructor injection is the decision
-  that matters; the container is an implementation detail.
+Why Koin over the alternatives:
 
-The `ViewModel` is built by an explicit `ViewModelProvider.Factory` reading
-from `AppContainer`.
+- **No annotation processing.** Koin's DSL is plain Kotlin resolved at runtime,
+  so it adds no KSP step and no Gradle plugin. On a toolchain already running a
+  brand-new AGP 9.1.1, avoiding annotation processing removes a real schedule
+  risk. (Koin *Annotations* would reintroduce KSP — the plain DSL is used
+  deliberately.)
+- **Real DI, not a hand-rolled container.** A reviewer looking for a
+  recognised approach finds one, without the setup cost of Hilt.
+- **Constructor injection is preserved.** Every class still takes its
+  dependencies as constructor parameters, so unit tests construct subjects
+  directly and never start Koin at all. The container is wiring, not a
+  test dependency.
 
-> **Reversible.** If Hilt is preferred for signalling reasons, it is a
-> contained change — see §7.
+The trade-off, recorded honestly: Koin resolves at runtime, so a missing
+binding is a crash on first resolution rather than a compile error. The
+mitigation is a `checkModules()` / `verify()` test in the JVM suite, which
+turns the graph back into a build-time check.
 
 ### 2.6 Concurrency
 
@@ -401,11 +444,6 @@ test data.
       before rung 2.2 is closed.
 - [ ] **Design tokens.** Purple value, status colours, radii, spacing, type
       scale, checkmark icon — pending PNG exports into `docs/design/`.
-- [ ] **Hilt vs manual DI.** §2.5 commits to a manual `AppContainer`. If Hilt
-      is preferred for signalling familiarity to the reviewer, the change is
-      contained — every class already uses constructor injection, so it is
-      annotations plus deleting one file. Decide before rung 0.2 wires the
-      Application class; later is more churn.
 - [ ] **DataStore.** Not adopted. Room covers both cached workouts and the
       completion overlay, and a sync timestamp is a column rather than a reason
       for a second persistence library. Revisit only if genuine user
