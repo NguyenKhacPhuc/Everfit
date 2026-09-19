@@ -1,0 +1,80 @@
+{
+  "data": [
+    {
+      "_id": "68c0a1f45b9d4a0017c8e100",
+      "day": 0,
+      "assignments": [
+        {
+          "_id": "68c0a1f45b9d4a0017c8e200",
+          "title": "Legs day",
+          "status": 1,
+          "total_exercise": 5
+        }
+      ]
+    },
+    {
+      "_id": "68c0a1f45b9d4a0017c8e101",
+      "day": 1,
+      "assignments": [
+        {
+          "_id": "68c0a1f45b9d4a0017c8e201",
+          "title": "Full warm up workout",
+          "status": 2,
+          "total_exercise": 6
+        }
+      ]
+    },
+    {
+      "_id": "68c0a1f45b9d4a0017c8e102",
+      "day": 2,
+      "assignments": []
+    },
+    {
+      "_id": "68c0a1f45b9d4a0017c8e103",
+      "day": 3,
+      "assignments": [
+        {
+          "_id": "68c0a1f45b9d4a0017c8e203",
+          "title": "Chest and shoulder workout",
+          "status": 1,
+          "total_exercise": 9
+        }
+      ]
+    },
+    {
+      "_id": "68c0a1f45b9d4a0017c8e104",
+      "day": 4,
+      "assignments": [
+        {
+          "_id": "68c0a1f45b9d4a0017c8e204",
+          "title": "Legs day",
+          "status": 0,
+          "total_exercise": 7
+        },
+        {
+          "_id": "68c0a1f45b9d4a0017c8e205",
+          "title": "HIIT Tabata 20:10 8x8",
+          "status": 0,
+          "total_exercise": 15
+        }
+      ]
+    },
+    {
+      "_id": "68c0a1f45b9d4a0017c8e105",
+      "day": 5,
+      "assignments": []
+    },
+    {
+      "_id": "68c0a1f45b9d4a0017c8e106",
+      "day": 6,
+      "assignments": [
+        {
+          "_id": "68c0a1f45b9d4a0017c8e206",
+          "title": "Squat, press, power clean",
+          "status": 0,
+          "total_exercise": 6
+        }
+      ]
+    }
+  ]
+}
