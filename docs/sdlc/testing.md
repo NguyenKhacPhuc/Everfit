@@ -114,8 +114,8 @@ Step 1, completion resolution (override wins):
 |---|---|---|
 | `true` | any | `true` |
 | `false` | any | `false` |
-| `null` | `COMPLETED` | `true` |
-| `null` | `ASSIGNED` / `MISSED` | `false` |
+| `null` | `COMPLETED` (raw `2`) | `true` |
+| `null` | `ASSIGNED` (`0`) / `MISSED` (`1`) | `false` |
 
 Step 2, display derivation:
 
@@ -130,6 +130,16 @@ Step 2, display derivation:
 
 The last two rows are the point: a future day greys out **even when marked
 complete**. A single-step implementation passes casual testing and fails here.
+
+**Status enum** — pinned against the design, since the mapping is not documented
+by the API and the obvious guess is wrong:
+
+| raw | `StoredStatus` | Evidence in `training.png` |
+|---|---|---|
+| `0` | `ASSIGNED` | Fri (today) "Legs day" shows a count and no status label |
+| `1` | `MISSED` | Mon "Legs day" and Thu "Chest and shoulder" show "Missed" |
+| `2` | `COMPLETED` | Tue "Full warm up workout" shows "Completed" |
+| other | `UNKNOWN` | renders greyed, never crashes |
 
 **Parsing** — asserted against the committed fixture, not hand-written JSON:
 

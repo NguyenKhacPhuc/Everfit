@@ -35,8 +35,7 @@ fun WeekGrid(
             // content. Android 15+ draws edge-to-edge by default, so without this
             // the Monday row sits under the status bar.
             .background(EverfitTheme.colors.screenBackground)
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .padding(EverfitTheme.spacing.lg),
+            .windowInsetsPadding(WindowInsets.safeDrawing),
     ) {
         weekDates.forEach { date ->
             DayCell(date = date, isToday = date == today) {

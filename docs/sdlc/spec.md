@@ -342,7 +342,7 @@ tying `day: 0..6` to a real calendar.
 Two distinct types, because the brief defines status by temporal position:
 
 ```
-StoredStatus   = ASSIGNED(0) | COMPLETED(1) | MISSED(2)    // assumption, see §7
+StoredStatus   = ASSIGNED(0) | MISSED(1) | COMPLETED(2)    // confirmed from the design
 DisplayStatus  = COMPLETED | MISSED | ASSIGNED | UPCOMING
 ```
 
@@ -438,11 +438,15 @@ preference — it is why `domain` may import nothing.
 
 ## 7. Open decisions
 
-- [ ] **Status enum semantics.** `0=ASSIGNED, 1=COMPLETED, 2=MISSED` is an
-      assumption. Every status colour depends on it. Confirm against the design
-      before rung 2.2 is closed.
-- [ ] **Design tokens.** Purple value, status colours, radii, spacing, type
-      scale, checkmark icon — pending PNG exports into `docs/design/`.
+- [x] **Status enum semantics — RESOLVED 2026-09-19 from the design.**
+      `0 = ASSIGNED, 1 = MISSED, 2 = COMPLETED`. Note this is **not** the
+      assumption previously recorded here, which had 1 and 2 reversed: the
+      fixture's `status=1` items render as "Missed" and its single `status=2`
+      item renders as "Completed". Had the assumption shipped, every past
+      workout would have shown the opposite state.
+- [x] **Design tokens — RESOLVED.** Extracted from `docs/design/training.png`:
+      purple `#7470EF`, card `#F7F8FC`, text `#1E0A3C`, secondary `#7B7E91`,
+      missed `#FF5E5E`, divider `#F1F1F1`. Spacing refined in Intent 04.
 - [ ] **DataStore.** Not adopted. Room covers both cached workouts and the
       completion overlay, and a sync timestamp is a column rather than a reason
       for a second persistence library. Revisit only if genuine user

@@ -52,8 +52,9 @@ semantics wrong propagates everywhere.
 
 ## 7. Open questions
 
-**Blocking rung 2.2:** the enum meaning. `0=ASSIGNED, 1=COMPLETED, 2=MISSED` is
-still an assumption, settled by the PNGs.
+**RESOLVED** — the enum meaning is settled by the design:
+`0 = ASSIGNED, 1 = MISSED, 2 = COMPLETED`. The earlier assumption reversed 1
+and 2, which would have shown every past workout in the opposite state.
 
 Work can proceed with the assumption **named in one place** so a correction is a
 one-line change. Rungs 2.1, 2.4, 2.5 are fully unblocked.

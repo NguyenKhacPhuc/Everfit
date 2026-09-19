@@ -15,13 +15,18 @@ data class EverfitSpacing(
     val xl: Dp = 24.dp,
 )
 
-/** Sizes that are neither spacing nor typography. */
+/**
+ * Sizes measured from docs/design/training.png (750px wide at 2x, so a 375dp
+ * screen). Refined further in Intent 04.
+ */
 @Immutable
 data class EverfitSizes(
-    val cellCorner: Dp = 8.dp,
-    val cellBorder: Dp = 1.dp,
-    val checkmark: Dp = 16.dp,
-    val statusDot: Dp = 6.dp,
+    val screenPadding: Dp = 20.dp,
+    val dayLabelWidth: Dp = 52.dp,
+    val cardCorner: Dp = 10.dp,
+    val cardPadding: Dp = 16.dp,
+    val checkmark: Dp = 24.dp,
+    val dividerThickness: Dp = 1.dp,
 )
 
 val LocalEverfitSpacing = staticCompositionLocalOf { EverfitSpacing() }

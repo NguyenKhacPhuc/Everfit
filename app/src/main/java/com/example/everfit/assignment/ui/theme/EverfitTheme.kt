@@ -24,10 +24,10 @@ fun EverfitTheme(content: @Composable () -> Unit) {
     ) {
         MaterialTheme(
             colorScheme = lightColorScheme(
-                primary = colors.todayHighlight,
-                onPrimary = colors.onTodayHighlight,
+                primary = colors.accent,
+                onPrimary = colors.onAccent,
                 background = colors.screenBackground,
-                surface = colors.cellBackground,
+                surface = colors.cardBackground,
                 onBackground = colors.textPrimary,
                 onSurface = colors.textPrimary,
             ),

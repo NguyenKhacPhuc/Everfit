@@ -181,7 +181,9 @@ Do not target a coverage percentage. The §6 matrices are the target.
   lives in `ui/theme`.
 - The mock API returns **no dates** — only `day: 0..6`, mapped onto the current
   Monday–Sunday week.
-- `status` values `0/1/2` are **undocumented**; the working assumption is
-  `0=ASSIGNED, 1=COMPLETED, 2=MISSED`, pending confirmation from the design.
+- `status` is `0 = ASSIGNED, 1 = MISSED, 2 = COMPLETED`, confirmed against
+  `docs/design/training.png`. **Not** the intuitive ordering — 1 and 2 are the
+  reverse of what most people guess. Any unrecognised value maps to `UNKNOWN`
+  and renders greyed.
 - Of the two API URLs in the brief, only `https://mock.internalef.com/workouts`
   is reachable.
