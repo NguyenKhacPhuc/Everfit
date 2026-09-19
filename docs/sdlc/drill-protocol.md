@@ -57,8 +57,11 @@ non-blocking is how a deadline is lost.
 
 ## After approval
 
-The agreed drill is committed as `docs/sdlc/plans/NN-<intent>.md`, including
-the **rejected options**. Recording what was not chosen, and why, is most of
+Drills live in `docs/sdlc/plans/NN-<intent>.md` and carry a status header:
+**DRAFT — awaiting approval**, then **APPROVED** with the date. They are
+written up front, as a set, so the whole board can be prioritised against real
+estimates rather than one intent at a time. They always retain the **rejected
+options**. Recording what was not chosen, and why, is most of
 the value — it stops a settled question being relitigated at hour 20, and it is
 the raw material for the video walkthrough.
 
