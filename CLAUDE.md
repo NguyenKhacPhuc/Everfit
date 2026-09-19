@@ -67,12 +67,31 @@ that still demos correctly.
 
 ## Testing
 
-Domain, data and ViewModel logic is JVM-testable with no device and no
-Robolectric. Use the committed fixture at
-[`docs/sdlc/api-sample-response.json`](docs/sdlc/api-sample-response.json) as
-the single source of test data — do not hit the live endpoint in tests.
+Full matrices: [`docs/sdlc/spec.md`](docs/sdlc/spec.md) §6. Rules:
 
-Ktor is tested with `MockEngine`.
+- Domain, data and ViewModel logic is JVM-testable. No device, no Robolectric.
+- **Never hit the live endpoint in a test.** Use the committed fixture at
+  [`docs/sdlc/api-sample-response.json`](docs/sdlc/api-sample-response.json).
+  A third party being down must not turn the suite red.
+- Ktor is tested with `MockEngine`; Room DAOs with an in-memory database.
+- **Hand-written fakes, not a mocking framework.** These interfaces have two or
+  three methods.
+- Test names are backtick sentences describing the behaviour, so a failure
+  explains itself without opening the file.
+- Every new rung adds its tests before it is marked done. A rung is not green
+  because it compiles.
+
+Three tests are load-bearing — do not weaken them:
+
+1. **Cache-before-network ordering.** Needs a suspended network fake the test
+   resumes explicitly. A fake returning instantly passes even when the
+   implementation awaits the network first.
+2. **Refresh preserves overrides.** Mark complete, refresh with a server
+   response saying `ASSIGNED`, assert it still reads completed.
+3. **Future days grey out even when completed.** A single-step status
+   implementation passes everything else and fails this.
+
+Do not target a coverage percentage. The §6 matrices are the target.
 
 ## Project facts worth remembering
 
