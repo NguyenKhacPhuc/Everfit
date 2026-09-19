@@ -6,6 +6,19 @@ This is the approval gate between Stage 2 (Design) and Stage 3 (Build). The
 playbook's own rule is that plan mode comes first and the plan is interrogated
 before it is approved; this defines what that interrogation must cover here.
 
+## Where this sits
+
+| Document | Answers |
+|---|---|
+| `intents/` | What must be true for this to be done |
+| `spec.md` | What was decided, and why |
+| `plans/` (drills) | How it will be executed, at what cost, with what risk |
+| `CLAUDE.md` | Rules that must not be broken |
+
+A drill is the only one of these that carries estimates, risks and sequencing.
+Keeping them out of the spec is what stops the spec ageing — an estimate is
+stale the moment work starts.
+
 ## The rule
 
 > Code is written only after the drill for that intent has been explicitly

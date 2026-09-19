@@ -3,6 +3,51 @@
 Status: **Draft** · Date: 2026-09-19 · Stage 2 (Design)
 Reads: [`intent.md`](intent.md) and [`intents/`](intents/)
 
+## 0. What this document is
+
+A record of **decisions and contracts**. It is the artefact Stage 3 reads before
+writing code, and the artefact a reviewer reads to understand why the code looks
+the way it does.
+
+### The test for what belongs here
+
+> If changing *how* something is implemented — without changing *what was
+> decided* — would make a section wrong, that section does not belong.
+
+A spec that drifts from the code is worse than no spec, because it is trusted.
+Keeping it to decisions is what keeps it true.
+
+### In scope
+
+- Layer boundaries, and what may cross them
+- Contracts: interface signatures, persisted shapes, error taxonomy, UI state shape
+- Domain rules, with the truth tables that define them
+- Decisions taken, alternatives rejected, and the reason
+- Constraints the implementation must satisfy
+
+### Out of scope
+
+- How a function is written
+- Wiring and configuration that the code expresses more precisely than prose
+- Exhaustive file listings
+- Anything a refactor would invalidate
+
+### Where the rest lives
+
+| Content | Home |
+|---|---|
+| Why a decision was taken, options weighed | This document |
+| How an intent will be executed, estimates, risks | `plans/NN-*.md` (drills) |
+| Rules an agent must not break | `CLAUDE.md` |
+| What must be true for a rung to be done | `intents/NN-*.md` |
+| Exact wiring | The code |
+
+### On code samples below
+
+Where code appears, it is the **contract** — a signature, a shape, a taxonomy.
+Blocks marked *illustrative* show intent only; the implementation is
+authoritative and no one should update this document when it changes.
+
 ## 1. Platform mapping
 
 The brief specifies iOS technologies; this is an Android submission. Each
@@ -70,6 +115,9 @@ dependencies** (§2.3). The split remains mechanical later: each package below
 maps 1:1 onto a module.
 
 ### 2.2 Package structure
+
+Target shape, indicative rather than exhaustive — the decision is the *grouping*
+and the direction of dependencies, not the file list:
 
 ```
 com.example.everfit.assignment
@@ -159,19 +207,21 @@ Mapping is one-directional and lives at the boundary it crosses:
 
 **Koin**, declared as a single module graph.
 
-```kotlin
-val appModule = module {
-    single { EverfitDatabase.build(androidContext()) }
-    single { get<EverfitDatabase>().workoutDao() }
-    single { get<EverfitDatabase>().completionDao() }
-    single { HttpClient(/* ... */) }
-    single { WorkoutApi(get()) }
-    single<Clock> { Clock.systemDefaultZone() }
-    single<CoroutineDispatcher>(named("io")) { Dispatchers.IO }
-    single<WorkoutRepository> { WorkoutRepositoryImpl(get(), get(), get(), get(named("io"))) }
-    viewModel { CalendarViewModel(get(), get()) }
-}
-```
+What is bound, and with what lifetime — this is the contract; the DSL that
+expresses it lives in the code:
+
+| Binding | Lifetime | Notes |
+|---|---|---|
+| `EverfitDatabase` and its DAOs | singleton | |
+| `HttpClient`, `WorkoutApi` | singleton | |
+| `Clock` | singleton | **injected**, never `systemDefaultZone()` inline (§4.1) |
+| IO `CoroutineDispatcher` | singleton, named | **injected**, never bare `Dispatchers.IO` (§2.6) |
+| `WorkoutRepository` | singleton | bound to the interface, not the implementation |
+| `CalendarViewModel` | per screen | |
+
+The two that matter are `Clock` and the dispatcher. Both exist as bindings
+purely so tests can replace them; inlining either makes §6.4's matrices
+untestable.
 
 Started in `EverfitApplication`; the screen resolves its state holder with
 `koinViewModel()`.
@@ -206,8 +256,8 @@ turns the graph back into a build-time check.
   — which is what makes the §5.1 ordering guarantee structural rather than
   timing-dependent.
 - The ViewModel collects in `viewModelScope`, surviving configuration change.
-- `stateIn(WhileSubscribed(5_000))` keeps the flow warm across rotation without
-  leaking it.
+- The state flow stays warm briefly after the last collector, so a rotation
+  does not re-query or re-fetch. *(Illustrative: `stateIn(WhileSubscribed(5_000))`.)*
 
 ### 2.7 Error model
 
