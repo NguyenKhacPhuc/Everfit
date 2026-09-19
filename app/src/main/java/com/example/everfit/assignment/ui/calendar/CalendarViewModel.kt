@@ -120,6 +120,9 @@ private fun initialState(weekProvider: WeekProvider): CalendarState {
         weekDates = week,
         today = today,
         days = week.map { DayUiModel(date = it, isToday = it == today, workouts = emptyList()) },
+        // Refreshing, not Idle: a refresh is wired to start immediately, and
+        // claiming Idle here makes "never loaded" look like "nothing scheduled".
+        load = Load.Refreshing,
     )
 }
 

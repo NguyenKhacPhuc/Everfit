@@ -1,6 +1,6 @@
 # Drill 07 — First-load feedback
 
-Status: **DRAFT — awaiting approval** · Covers rungs 7.1–7.5
+Status: **APPROVED** 2026-09-19 (option E) · Covers rungs 7.1–7.5
 
 ## 1. Goal
 

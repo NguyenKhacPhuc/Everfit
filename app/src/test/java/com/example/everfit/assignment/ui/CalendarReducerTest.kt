@@ -95,6 +95,53 @@ class CalendarReducerTest {
         assertTrue(after.showsFullScreenError)
     }
 
+    // ── Intent 07: telling "still loading" apart from "nothing scheduled" ──
+
+    @Test
+    fun `placeholders show while loading with nothing yet loaded`() {
+        val blank = week.map { day(it) }
+
+        val after = reduceCalendar(state(days = blank), CalendarResult.RefreshStarted)
+
+        assertTrue(after.showsLoadingPlaceholders)
+    }
+
+    /** Rung 7.4: a background refresh must not replace content with placeholders. */
+    @Test
+    fun `a refresh over existing content shows no placeholders`() {
+        val content = listOf(day(monday, workout("a"))) + week.drop(1).map { day(it) }
+
+        val after = reduceCalendar(state(days = content), CalendarResult.RefreshStarted)
+
+        assertFalse(after.showsLoadingPlaceholders, "content is already on screen")
+    }
+
+    /** Rung 7.5: a week that genuinely has no workouts is not a loading week. */
+    @Test
+    fun `an empty week that finished loading shows no placeholders`() {
+        val blank = week.map { day(it) }
+
+        val after = reduceCalendar(
+            state(days = blank, load = Load.Refreshing),
+            CalendarResult.RefreshSucceeded,
+        )
+
+        assertFalse(after.showsLoadingPlaceholders)
+    }
+
+    @Test
+    fun `a failure with nothing loaded shows the error, not placeholders`() {
+        val blank = week.map { day(it) }
+
+        val after = reduceCalendar(
+            state(days = blank, load = Load.Refreshing),
+            CalendarResult.RefreshFailed("offline"),
+        )
+
+        assertFalse(after.showsLoadingPlaceholders)
+        assertTrue(after.showsFullScreenError)
+    }
+
     @Test
     fun `week dates never change after construction`() {
         val results = listOf(

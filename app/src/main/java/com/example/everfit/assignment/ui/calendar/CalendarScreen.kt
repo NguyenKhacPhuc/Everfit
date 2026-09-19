@@ -1,5 +1,7 @@
 package com.example.everfit.assignment.ui.calendar
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,6 +26,8 @@ import com.example.everfit.assignment.R
 import com.example.everfit.assignment.domain.model.DisplayStatus
 import com.example.everfit.assignment.ui.calendar.components.DayCell
 import com.example.everfit.assignment.ui.calendar.components.WorkoutCard
+import com.example.everfit.assignment.ui.calendar.components.WorkoutSkeleton
+import kotlinx.coroutines.delay
 import com.example.everfit.assignment.ui.theme.EverfitTheme
 import java.time.LocalDate
 
@@ -40,16 +49,39 @@ fun CalendarScreen(
         if (state.showsFullScreenError) {
             FullScreenError(onRetry = { onIntent(CalendarIntent.Refresh) })
         } else {
+            // Gated by a short delay: a warm start answers from cache almost
+            // immediately, and flashing placeholders at it would trade one
+            // flicker for another.
+            val showPlaceholders = delayed(state.showsLoadingPlaceholders)
+
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(state.days, key = { it.date }) { day ->
                     DayCell(date = day.date, isToday = day.isToday) {
-                        day.workouts.forEach { workout ->
-                            WorkoutCard(
-                                workout = workout,
-                                onClick = {
-                                    onIntent(CalendarIntent.ToggleCompletion(workout.id))
-                                },
-                            )
+                        Crossfade(
+                            targetState = showPlaceholders,
+                            animationSpec = tween(CONTENT_FADE_MS),
+                            label = "workouts",
+                        ) { loading ->
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(
+                                    EverfitTheme.spacing.sm
+                                ),
+                            ) {
+                                if (loading) {
+                                    WorkoutSkeleton()
+                                } else {
+                                    day.workouts.forEach { workout ->
+                                        WorkoutCard(
+                                            workout = workout,
+                                            onClick = {
+                                                onIntent(
+                                                    CalendarIntent.ToggleCompletion(workout.id)
+                                                )
+                                            },
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -57,6 +89,27 @@ fun CalendarScreen(
         }
     }
 }
+
+/**
+ * True only once [value] has held for [delayMillis]. Falls back to false the
+ * instant [value] does, so content is never held back once it arrives.
+ */
+@Composable
+private fun delayed(value: Boolean, delayMillis: Long = PLACEHOLDER_DELAY_MS): Boolean {
+    var settled by remember { mutableStateOf(false) }
+    LaunchedEffect(value) {
+        if (value) {
+            delay(delayMillis)
+            settled = true
+        } else {
+            settled = false
+        }
+    }
+    return value && settled
+}
+
+private const val PLACEHOLDER_DELAY_MS = 150L
+private const val CONTENT_FADE_MS = 220
 
 @Composable
 private fun FullScreenError(onRetry: () -> Unit) {

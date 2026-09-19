@@ -76,6 +76,18 @@ class CalendarViewModelTest {
     }
 
     /**
+     * Rung 7.1. The first frame previously said Load.Idle while a refresh was
+     * about to start, so "never loaded" looked identical to "nothing scheduled".
+     */
+    @Test
+    fun `the first frame reports loading, not idle`() = runTest {
+        val vm = viewModel(FakeRepository().apply { gate = CompletableDeferred() })
+
+        assertIs<Load.Refreshing>(vm.state.value.load)
+        assertTrue(vm.state.value.showsLoadingPlaceholders)
+    }
+
+    /**
      * flatMapFirst: a double tap must not start two refreshes, and must not
      * cancel the first. flatMapLatest would cancel; flatMapConcat would queue.
      */

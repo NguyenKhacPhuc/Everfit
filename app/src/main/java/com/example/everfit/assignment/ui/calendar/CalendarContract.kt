@@ -24,6 +24,17 @@ data class CalendarState(
         get() = load is Load.Failed && days.all { it.workouts.isEmpty() }
 
     val isRefreshing: Boolean get() = load is Load.Refreshing
+
+    /**
+     * True only on a cold start: refreshing with nothing yet on screen.
+     *
+     * Derived rather than stored, which is what makes the three cases fall out
+     * without extra state — a background refresh over content is false because
+     * `days` is populated, and a week that genuinely has no workouts is false
+     * because `load` has settled.
+     */
+    val showsLoadingPlaceholders: Boolean
+        get() = isRefreshing && days.all { it.workouts.isEmpty() }
 }
 
 @Immutable
