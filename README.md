@@ -5,7 +5,7 @@ with their status, and lets you mark a workout complete locally.
 
 | | |
 |---|---|
-| **Video walkthrough** | _TODO: paste Loom link here before submitting_ |
+| **Video walkthrough** | [Watch (4 min)](https://drive.google.com/file/d/12o4v8Sqv-My0xsBSauT60NYmf-dz9Zfi/view?usp=sharing) |
 | **Design** | [Figma](https://www.figma.com/design/APChc5i8CKTSn7CZg7Gg36/Everfit?node-id=23776-49540) · exports in [`docs/design/`](docs/design/) |
 | **Tests** | 58 JVM unit tests — no emulator required |
 
@@ -100,31 +100,6 @@ Two tests are load-bearing and were each written to fail first:
 
 Tests read a committed capture of the API ([`workouts.json`](app/src/test/resources/workouts.json)),
 never the live endpoint, so a third party being down cannot turn the suite red.
-
-**No instrumented tests, by decision.** The architecture pushes almost everything
-into Tier 1, so an emulator suite would add narrow value — that Room's generated
-SQL matches its annotations, and that composables emit what their previews
-already show — while making the gate too slow to run after every change. Those
-areas were verified on a device instead: a completion mark surviving both an app
-restart *and* a refresh reporting the opposite status, and the loading/crossfade
-behaviour checked by extracting frames from a screen recording. The gap this
-leaves is that nothing automated would catch a Room schema change breaking the
-query, or a visual regression — on a longer-lived codebase both are worth an
-emulator in CI. Reasoning in [`docs/sdlc/testing.md`](docs/sdlc/testing.md).
-
-## Findings in the brief
-
-Reported rather than worked around:
-
-1. **Two mock API URLs, one dead.** `https://mock.internalef.com/workouts` (from
-   the Overview) is live and is what the app uses.
-   `http://demo6732818.mockable.io/workouts` (from the Technical Requirements) does
-   not resolve.
-2. **The `status` enum is undocumented, and the intuitive reading is wrong.**
-   Cross-referencing the design against the fixture gives
-   **`0 = Assigned, 1 = Missed, 2 = Completed`** — note 1 and 2 are the reverse of
-   the obvious guess. The fixture has three `status=1` items and one `status=2`, so
-   guessing would have made the *common* case wrong.
 
 ## AI Collaboration
 
