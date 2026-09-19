@@ -10,6 +10,7 @@ room = "2.8.5"
 koin = "4.2.2"
 ktor = "3.6.0"
 serialization = "1.11.0"
+desugarJdkLibs = "2.1.5"
 coreKtx = "1.19.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -47,6 +48,7 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

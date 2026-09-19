@@ -32,12 +32,17 @@ android {
     }
 
     compileOptions {
+        // java.time is API 26+; minSdk is 24. Without this the date code compiles,
+        // unit tests pass on the JVM, and the app crashes on a real API 24 device.
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
     implementation(libs.androidx.core.ktx)
 
     implementation(platform(libs.androidx.compose.bom))

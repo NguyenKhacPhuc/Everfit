@@ -68,8 +68,12 @@ Scope and rationale: [`docs/sdlc/WORKFLOW.md`](docs/sdlc/WORKFLOW.md).
 Layered MVVM with the Clean Architecture dependency rule. Dependencies point
 inward: `ui -> domain <- data`.
 
-- `domain/` imports **nothing** outside `kotlin`/`kotlinx`. No `android.*`, no
-  Room, no Ktor, no `Context`. This is what keeps domain tests on the JVM.
+- `domain/` imports **no Android and no library types** — no `android.*`, no
+  Room, no Ktor, no Compose, no `Context`. Kotlin stdlib and plain JDK types
+  (`java.time`) are fine: they are what keep domain tests on the JVM.
+- Never `LocalDate.now()` — take a `Clock`. Never `WeekFields.of(locale)` for
+  the week start; it yields Sunday-first in some locales, which is correct
+  generally and wrong here. Use `previousOrSame(MONDAY)`.
 - `ui/` must never reference DTOs or Room entities.
 - `data/` must never reference Compose or ViewModel types.
 - The `WorkoutRepository` interface lives in `domain`; its implementation lives
