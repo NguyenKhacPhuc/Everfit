@@ -151,12 +151,31 @@ The ordering assertion needs a controllable source — a suspended network fake
 that the test resumes explicitly. A fake that returns instantly passes even
 when the implementation awaits the network first, which is the exact bug.
 
-**`CalendarViewModel`**
+**`reduceCalendar` — Tier 1.** Plain calls, no coroutines. Most of the suite.
 
-- `weekDates` is populated in the **initial** state, before any emission
-- `isLoading` true → false across a refresh
-- failed refresh: `error` set **and** `days` still populated
-- `ToggleCompletion` delegates by id; no business logic in the ViewModel
+| Result in | From state | Expect |
+|---|---|---|
+| `CachedLoaded(days)` | any | `days` replaced, `load` untouched |
+| `RefreshStarted` | `Idle` | `load = Refreshing` |
+| `RefreshSucceeded` | `Refreshing` | `load = Idle`, **`days` untouched** |
+| `RefreshFailed(msg)` | `Refreshing` | `load = Failed(msg)`, **`days` untouched** |
+| `RefreshFailed` | `days` populated | `showsFullScreenError == false` |
+| `RefreshFailed` | `days` all empty | `showsFullScreenError == true` |
+| any | any | `weekDates` never changes after construction |
+
+The two "`days` untouched" rows are rung 3.4 expressed as a transition: no
+reducer branch clears content on failure, so it cannot happen.
+
+**`CalendarViewModel` — Tier 2.** Only what Tier 1 cannot reach.
+
+- `weekDates` populated in the **initial** state, before any emission
+- **double `Refresh` starts one refresh** — `flatMapFirst`, and the second must
+  not cancel the first
+- **two rapid `ToggleCompletion` both land** — `flatMapConcat`, neither cancels
+  the other
+- `RefreshFailed` over populated `days` emits `ShowSnackbar`; over empty `days`
+  it does not (that is full-screen state instead)
+- effects arrive ordered with the state change that caused them
 
 **Koin** — `verify()` / `checkModules()` in the JVM suite, converting Koin's
 runtime resolution back into a build-time failure (§2.5).
