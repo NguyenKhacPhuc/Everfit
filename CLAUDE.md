@@ -93,7 +93,11 @@ Full matrices: [`docs/sdlc/spec.md`](docs/sdlc/spec.md) §6. Rules:
 - **Hand-written fakes, not a mocking framework.** These interfaces have two or
   three methods.
 - Test names are backtick sentences describing the behaviour, so a failure
-  explains itself without opening the file.
+  explains itself without opening the file — **but camelCase in
+  `src/androidTest`**: method names with spaces fail below API 30 and minSdk
+  is 24.
+- ViewModel tests need the `MainDispatcherRule`. `Dispatchers.Main` does not
+  exist on the JVM.
 - Every new rung adds its tests before it is marked done. A rung is not green
   because it compiles.
 

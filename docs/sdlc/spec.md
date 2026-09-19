@@ -446,6 +446,14 @@ everything is a plain JVM test, so the suite runs in seconds with no emulator.
 `turbine` (Flow assertions), `ktor-client-mock`, `koin-test`,
 `androidx.room:room-testing`, `androidx.compose.ui:ui-test-junit4`.
 
+JUnit 4, not 5: `androidx.test` rules and `createComposeRule()` are JUnit4-based,
+and JUnit 5 does not run instrumented tests at all, so adopting it would mean
+two frameworks in one project (Drill 00 §3).
+
+A `MainDispatcherRule` calling `Dispatchers.setMain(...)` is required for every
+ViewModel test — `Dispatchers.Main` does not exist on the JVM, and its absence
+fails with a message that does not obviously point at the cause.
+
 Test doubles are **hand-written fakes**, not a mocking framework. The
 interfaces here have two or three methods; a fake is shorter than the stubbing
 it replaces and does not break when a signature changes.
@@ -453,11 +461,20 @@ it replaces and does not break when a signature changes.
 ### 6.3 Naming
 
 ```kotlin
+// src/test — JVM
 fun `week containing a Sunday starts on the preceding Monday`() { }
+
+// src/androidTest — instrumented
+fun longWorkoutTitleTruncatesWithEllipsis() { }
 ```
 
-Backtick sentences describing behaviour. A failure name should explain the
-broken rule without opening the file.
+Backtick sentences describing behaviour, so a failure name explains the broken
+rule without opening the file.
+
+**Instrumented tests are the exception.** Method names containing spaces were
+rejected by the platform before API 30, and minSdk here is 24 — a backtick name
+in `src/androidTest` fails on exactly the older devices the app supports. Those
+use camelCase. See Drill 00 §6.
 
 ### 6.4 The matrices
 
