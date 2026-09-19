@@ -5,9 +5,19 @@ Reads: [`intent.md`](intent.md) and [`intents/`](intents/)
 
 ## 0. What this document is
 
-A record of **decisions and contracts**. It is the artefact Stage 3 reads before
-writing code, and the artefact a reviewer reads to understand why the code looks
-the way it does.
+In one sentence:
+
+> **Everything that was decided and must stay true, plus the reason it was
+> decided that way.**
+
+It is the artefact Stage 3 reads before writing code, and the artefact a
+reviewer reads to understand why the code looks the way it does.
+
+Note that this is defined by the *kind* of statement, not by topic. Technology,
+patterns and architecture are the obvious residents, but **domain rules belong
+here too** (§4) — the status truth table is neither a technology nor a pattern,
+yet it is a decision the implementation must satisfy, and it is the section most
+expensive to get wrong.
 
 ### The test for what belongs here
 
