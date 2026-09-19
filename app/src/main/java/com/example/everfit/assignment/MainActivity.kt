@@ -3,54 +3,41 @@ package com.example.everfit.assignment
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.everfit.assignment.domain.WeekProvider
+import com.example.everfit.assignment.ui.calendar.components.WeekGrid
 import com.example.everfit.assignment.ui.theme.EverfitTheme
+import java.time.Clock
+import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Intent 01 scaffold: the grid is driven directly by WeekProvider.
+        // Intent 03 replaces this with a Koin-provided CalendarViewModel.
+        val weekProvider = WeekProvider(Clock.systemDefaultZone())
+
         setContent {
             EverfitTheme {
-                PlaceholderScreen()
+                WeekGrid(
+                    weekDates = weekProvider.currentWeek(),
+                    today = weekProvider.today(),
+                )
             }
         }
     }
 }
 
-/**
- * Rung 0.2/0.3 scaffold, replaced by CalendarScreen in Intent 01.
- *
- * Deliberately uses only theme tokens — no literal colour, dp or sp. That is the
- * verification for rung 0.3: if this screen can be written without literals, the
- * token layer is complete enough for the real screen.
- */
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
-private fun PlaceholderScreen() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(EverfitTheme.colors.screenBackground)
-            .padding(EverfitTheme.spacing.lg),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = "Training Calendar",
-            style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
-            color = EverfitTheme.colors.textPrimary,
+private fun CalendarPreview() {
+    val monday = LocalDate.parse("2026-09-14")
+    EverfitTheme {
+        WeekGrid(
+            weekDates = List(7) { monday.plusDays(it.toLong()) },
+            today = LocalDate.parse("2026-09-19"),
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PlaceholderScreenPreview() {
-    EverfitTheme { PlaceholderScreen() }
 }
