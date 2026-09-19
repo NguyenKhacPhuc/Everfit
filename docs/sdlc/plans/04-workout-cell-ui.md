@@ -1,6 +1,6 @@
 # Drill 04 — Workout cell UI
 
-Status: **DRAFT — awaiting approval** · Covers rungs 4.1–4.5
+Status: **APPROVED** 2026-09-19 · Covers rungs 4.1–4.5
 
 ## 1. Goal
 

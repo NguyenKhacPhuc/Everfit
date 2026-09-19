@@ -1,6 +1,6 @@
 # Drill 05 — Completion toggle
 
-Status: **DRAFT — awaiting approval** · Covers rungs 5.1–5.6
+Status: **APPROVED** 2026-09-19 · Covers rungs 5.1–5.6
 
 ## 1. Goal
 

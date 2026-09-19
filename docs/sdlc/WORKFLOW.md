@@ -104,15 +104,17 @@ no production code exists.
 
 | Intent | Drill | Rungs |
 |---|---|---|
-| 00 Foundation | DRAFT | 0.1 ✅ · 0.6 ✅ · 0.2–0.5 not started |
-| 01 Week grid | DRAFT | not started |
-| 02 Data layer | DRAFT | not started |
-| 03 Local cache | DRAFT | not started |
-| 04 Cell UI | DRAFT | not started |
-| 05 Toggle | DRAFT | not started |
-| 06 Submission | DRAFT | not started |
+| 00 Foundation | ✅ APPROVED | 0.1 ✅ · 0.6 ✅ · 0.2–0.5 not started |
+| 01 Week grid | ✅ APPROVED | not started |
+| 02 Data layer | ✅ APPROVED | not started |
+| 03 Local cache | ✅ APPROVED | not started |
+| 04 Cell UI | ✅ APPROVED | not started |
+| 05 Toggle | ✅ APPROVED | not started |
+| 06 Submission | ✅ APPROVED | not started |
 
-**All seven drills await approval. No code may be written.**
+**All seven drills APPROVED 2026-09-19. Deadline **2026-09-20 10:44 +07**.**
+
+Intent 00 in progress.
 
 Open blockers: design PNGs (`docs/design/`) block rungs 1.4 and 4.1–4.5; the
 status enum meaning (spec §7) is settled by the same exports.

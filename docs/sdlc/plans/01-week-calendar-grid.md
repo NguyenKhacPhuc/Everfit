@@ -1,6 +1,6 @@
 # Drill 01 — Week calendar grid
 
-Status: **DRAFT — awaiting approval** · Covers rungs 1.1–1.4
+Status: **APPROVED** 2026-09-19 · Covers rungs 1.1–1.4
 
 ## 1. Goal
 

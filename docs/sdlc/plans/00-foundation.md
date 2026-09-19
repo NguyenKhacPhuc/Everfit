@@ -1,6 +1,6 @@
 # Drill 00 — Foundation
 
-Status: **DRAFT — awaiting approval** · Covers rungs 0.2–0.5
+Status: **APPROVED** 2026-09-19 · Covers rungs 0.2–0.5
 
 ## 1. Goal
 

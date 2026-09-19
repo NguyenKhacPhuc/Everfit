@@ -1,6 +1,6 @@
 # Drill 02 — Workout data layer
 
-Status: **DRAFT — awaiting approval** · Covers rungs 2.1–2.5
+Status: **APPROVED** 2026-09-19 · Covers rungs 2.1–2.5
 
 ## 1. Goal
 

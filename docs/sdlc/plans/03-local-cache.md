@@ -1,6 +1,6 @@
 # Drill 03 — Local cache
 
-Status: **DRAFT — awaiting approval** · Covers rungs 3.1–3.5
+Status: **APPROVED** 2026-09-19 · Covers rungs 3.1–3.5
 
 ## 1. Goal
 

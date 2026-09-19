@@ -1,6 +1,6 @@
 # Drill 06 — Submission package
 
-Status: **DRAFT — awaiting approval** · Covers rungs 6.1–6.6
+Status: **APPROVED** 2026-09-19 · Covers rungs 6.1–6.6
 
 ## 1. Goal
 
