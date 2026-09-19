@@ -105,6 +105,14 @@ Stages 1 (Plan) and 2 (Design) complete. Stage 3 in progress.
 place, gate proven to fail (exit 1 on a broken test), app verified launching on
 `emulator-5554`.
 
+**Intents 03–05 done.** Room cache, MVI store, workout cards, Koin wiring.
+Verified on `emulator-5554` against the real endpoint: the week renders to the
+design, a tap marks a workout complete, and the mark **survives an app restart
+during which a refresh reported the opposite status** — rungs 5.4 and 5.5
+demonstrated end to end.
+
+**53 JVM tests green.**
+
 **Intent 02 done.** DTOs, two-step status model, Ktor with typed `DataError`,
 repository boundary declared. **34 JVM tests green.**
 
@@ -121,14 +129,14 @@ applied from `training.png`. Status enum **corrected**: `0=ASSIGNED, 1=MISSED,
 | 00 Foundation | ✅ APPROVED | **0.1–0.6 ✅ complete** |
 | 01 Week grid | ✅ APPROVED | **1.1–1.4 ✅ complete** |
 | 02 Data layer | ✅ APPROVED | **2.1–2.5 ✅ complete** |
-| 03 Local cache | ✅ APPROVED | not started |
-| 04 Cell UI | ✅ APPROVED | not started |
-| 05 Toggle | ✅ APPROVED | not started |
+| 03 Local cache | ✅ APPROVED | **3.2–3.5 ✅** · 3.1 instrumented test outstanding |
+| 04 Cell UI | ✅ APPROVED | **4.1–4.5 ✅ complete** |
+| 05 Toggle | ✅ APPROVED | **5.1–5.6 ✅** (verified on device) |
 | 06 Submission | ✅ APPROVED | not started |
 
 **All seven drills APPROVED 2026-09-19. Deadline **2026-09-20 10:44 +07**.**
 
-**Next: Intent 03, rung 3.1** — Room entities and DAOs, then the cache-first repository.
+**Next: rung 3.1** (instrumented DAO test) and **Intent 06** (README, AI Collaboration notes, public repo, video).
 
 **No blockers.** Design exports are in `docs/design/`; both open questions are
 resolved.
