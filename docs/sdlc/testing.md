@@ -8,7 +8,26 @@ must pass. The two age at different rates — a decision is stable, a test list
 grows with every rung.
 
 
-## 1 Where tests run
+## Tiers
+
+From the reference implementation — the split that makes MVI cheap to test.
+
+**Tier 1 — the reducer.** Plain function calls. No dispatcher, no fake, no
+`runTest`. `reduceCalendar(state, result)` is a top-level pure function, so a
+transition test is two lines and runs in microseconds. **Most rules belong
+here**, including every stale-result guard and the whole status matrix.
+
+**Tier 2 — the ViewModel.** Needs `MainDispatcherRule` and a fake repository.
+Reserved for what Tier 1 cannot reach: pipeline behaviour — that a double
+`Refresh` starts one refresh (`flatMapFirst`), that two rapid toggles both land
+(`flatMapConcat`), that effects fire in order with the state that caused them.
+
+**Tier 3 — instrumented.** DAOs and Compose.
+
+The point of the split: a rule tested at Tier 1 costs nothing to run and cannot
+flake. Pushing logic into the reducer is therefore also a testing decision.
+
+## Where tests run
 
 The architecture in §2.3 exists largely to make this table lopsided: almost
 everything is a plain JVM test, so the suite runs in seconds with no emulator.
@@ -16,17 +35,18 @@ everything is a plain JVM test, so the suite runs in seconds with no emulator.
 | Subject | Kind | Device |
 |---|---|---|
 | `WeekProvider` | JVM unit, fixed `Clock` | No |
+| `reduceCalendar` | **Tier 1** — plain calls, no coroutines | No |
 | `StatusResolver` | JVM unit, table-driven | No |
 | DTO parsing / mappers | JVM unit, committed fixture | No |
 | `WorkoutApi` | JVM unit, Ktor `MockEngine` | No |
 | `WorkoutRepositoryImpl` | JVM unit, fake DAOs | No |
-| `CalendarViewModel` | JVM unit, fake repository + test dispatcher | No |
+| `CalendarViewModel` | **Tier 2** — fake repo + `MainDispatcherRule` | No |
 | Koin graph | JVM unit, `verify()` | No |
 | DAO / migrations | Instrumented, in-memory Room | Yes |
 | Composables | Instrumented, Compose UI test | Yes |
 | Visual fidelity | Screenshot vs design | Yes |
 
-## 2 Libraries
+## Libraries
 
 `junit4`, `kotlinx-coroutines-test` (`runTest`, `StandardTestDispatcher`),
 `turbine` (Flow assertions), `ktor-client-mock`, `koin-test`,
@@ -44,7 +64,7 @@ Test doubles are **hand-written fakes**, not a mocking framework. The
 interfaces here have two or three methods; a fake is shorter than the stubbing
 it replaces and does not break when a signature changes.
 
-## 3 Naming
+## Naming
 
 ```kotlin
 // src/test — JVM
@@ -62,7 +82,7 @@ rejected by the platform before API 30, and minSdk here is 24 — a backtick nam
 in `src/androidTest` fails on exactly the older devices the app supports. Those
 use camelCase. See Drill 00 §6.
 
-## 4 The matrices
+## The matrices
 
 These are the tests that matter. Everything else is incidental.
 
@@ -141,7 +161,7 @@ when the implementation awaits the network first, which is the exact bug.
 **Koin** — `verify()` / `checkModules()` in the JVM suite, converting Koin's
 runtime resolution back into a build-time failure (§2.5).
 
-## 5 What is deliberately not tested
+## What is deliberately not tested
 
 Named so their absence reads as a decision:
 
@@ -154,7 +174,7 @@ Named so their absence reads as a decision:
 No coverage percentage is targeted. The matrices above are the target; a
 percentage would reward testing the list above.
 
-## 6 The gate
+## The gate
 
 `./gradlew build` runs compilation, unit tests and lint, and exits non-zero on
 any failure. That single command is the feedback loop — an agent or a CI step
