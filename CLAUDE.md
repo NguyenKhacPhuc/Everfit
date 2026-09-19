@@ -47,6 +47,22 @@ Investigating, reading and writing documents need no gate.
 If execution shows the approved approach is wrong, stop and re-drill rather
 than silently substituting a different design.
 
+## Test first
+
+**Write the failing test before the implementation, and run it to see it fail.**
+Scope and rationale: [`docs/sdlc/WORKFLOW.md`](docs/sdlc/WORKFLOW.md).
+
+- The cases are already specified. `docs/sdlc/testing.md` is the test list, not
+  a summary of one — transcribe it, do not invent cases.
+- A test that passes before the implementation exists asserts nothing and looks
+  exactly like one that works. Seeing red is the only thing that distinguishes
+  them.
+- Test and implementation land in the **same commit**; the rung is the unit.
+- Exceptions, and only these: build wiring (nothing to assert beyond the gate),
+  visual fidelity (not expressible as an assertion), instrumented DAO tests
+  (device loop too slow) — test-after is acceptable there.
+- Fixing a bug? Write the failing test first, always. No exceptions.
+
 ## Architecture rules
 
 Layered MVVM with the Clean Architecture dependency rule. Dependencies point

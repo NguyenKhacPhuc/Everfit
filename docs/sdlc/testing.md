@@ -84,7 +84,11 @@ use camelCase. See Drill 00 §6.
 
 ## The matrices
 
-These are the tests that matter. Everything else is incidental.
+**This is a test list, not a summary of one.** Each row is written before the
+code it covers (see [`WORKFLOW.md`](WORKFLOW.md)). Transcribe these rows; do not
+re-derive them at the keyboard.
+
+Everything not listed here is incidental.
 
 **`WeekProvider`** — the API carries no dates, so this mapping is load-bearing.
 
