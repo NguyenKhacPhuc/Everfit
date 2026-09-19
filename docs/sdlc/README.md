@@ -25,6 +25,13 @@ zero while measuring nothing real. Stages 1–4 are kept because the
 intent -> spec -> plan chain and the self-verifying test loop genuinely improve
 the delivered code.
 
+## Execution gate
+
+Implementation is gated on an approved drill per intent — options, trade-offs,
+impact, open questions, estimate, risks and priority. See
+[`drill-protocol.md`](drill-protocol.md). Approved drills are committed to
+`plans/`.
+
 ## The ladder
 
 Intents decompose into numbered **rungs**. A rung is the smallest unit of work

@@ -23,6 +23,22 @@ failing build. Redirect to a file and check `$?`:
 
 This already produced one false pass in this repo.
 
+## Execution gate
+
+**Do not write production code, build files or dependency changes until the
+drill for that intent has been explicitly approved.**
+
+Protocol: [`docs/sdlc/drill-protocol.md`](docs/sdlc/drill-protocol.md). A drill
+covers options with pros and cons, a recommendation, what it affects, blocking
+vs non-blocking open questions, an estimate with confidence, risks, and
+priority. Approval means clear agreement — a question or an unrelated reply is
+not approval.
+
+Investigating, reading and writing documents need no gate.
+
+If execution shows the approved approach is wrong, stop and re-drill rather
+than silently substituting a different design.
+
 ## Architecture rules
 
 Layered MVVM with the Clean Architecture dependency rule. Dependencies point
