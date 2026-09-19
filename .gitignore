@@ -1,15 +1,14 @@
 *.iml
+# IDE config is local to a machine and not part of the deliverable.
+/.idea/
 .gradle
 /local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
 local.properties
+
+# Local demo helper for the video walkthrough — not part of the deliverable.
+/scripts/
