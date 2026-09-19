@@ -33,12 +33,38 @@ is exactly why it is also written into CLAUDE.md as an invariant.
 
 ## 5. Options — update feedback
 
-**A — Write to store, let the observable query re-emit.**
-**B — Optimistic UI state, then write.**
+**A — Write to store, let the Room `Flow` re-emit as `CachedLoaded`.**
+**B — Optimistic: emit a `CompletionToggled` Result the reducer applies, then write.**
 
 **Recommendation: A.** A local write plus re-emission is single-digit
 milliseconds; B adds a second source of truth and a rollback path to solve a
 latency problem that does not exist offline.
+
+The MVI consequence is worth stating plainly, because it looks like an
+omission: **the toggle pipeline produces no state-changing Result of its own.**
+Room is the source of truth, so the write returns through the cache pipeline as
+an ordinary `CachedLoaded`. There is no `CompletionToggled` in the Result
+hierarchy, and the reducer gains no branch for it.
+
+Choosing B would require one — plus a `CompletionToggleFailed` to roll back, and
+a reducer that can distinguish an optimistic value from a confirmed one. That is
+the real cost of B, and it buys nothing against a local database.
+
+## 5a. Pipeline shape
+
+```
+intents.filterIsInstance<ToggleCompletion>()
+    .flatMapConcat { repo.toggleCompletion(it.id) }   // emits nothing
+    .pipeToState()
+```
+
+`flatMapConcat`, not `flatMapLatest`: two rapid toggles on different workouts
+are **independent facts**, and neither may cancel the other. `flatMapLatest`
+would silently drop the first — a bug that appears only under fast tapping and
+never in a demo.
+
+Not `flatMapFirst` either: that is for actions where a second request is
+*redundant* (refresh, submit). Two toggles are not redundant.
 
 ## 6. Options — merge semantics
 
@@ -60,6 +86,11 @@ Depends on Intent 03's storage choice. Under the DataStore fallback, the
 override blob is written independently of the workouts blob — invariant intact,
 atomicity weaker.
 
+Adds one Intent (`ToggleCompletion(id)`) and one pipeline. It adds **no Result
+and no reducer branch**, so Tier 1 gains no cases from this intent — the
+correctness here lives in the DAO write and the mapper, which is where §8 puts
+the tests.
+
 ## 8. Open questions
 
 **Blocking rung 5.3 only:** the checkmark icon and its placement. A Material
@@ -74,8 +105,11 @@ completion). Worth one line in the README as an interpretation.
 
 ## 9. Estimate
 
-**1.5–2.5h, medium-high confidence.** Toggle + tests 45 min; persistence 30 min;
-refresh-preservation test 30 min; checkmark 20 min.
+**1.5–2.5h, medium-high confidence.** Toggle pipeline + DAO tests 45 min;
+persistence 30 min; refresh-preservation test 30 min; checkmark 20 min.
+
+Unchanged by MVI: the pipeline is three lines, and the tests that matter were
+already repository-level rather than state-holder-level.
 
 Blows up if the merge semantics (§6) turn out to need transaction work.
 

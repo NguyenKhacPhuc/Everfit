@@ -8,8 +8,8 @@
 
 | Rung | Outcome | Verified by |
 |---|---|---|
-| 5.1 | Tapping a workout toggles its state, addressed by item id | State-holder unit test |
-| 5.2 | Only the tapped workout changes | Test with two workouts sharing a day and a title |
+| 5.1 | Tapping a workout toggles its state, addressed by item id | Tier 2 ViewModel test — intent in, DAO write out |
+| 5.2 | Only the tapped workout changes | DAO/repository test, two workouts sharing a day and a title |
 | 5.3 | A checkmark appears on the right when completed, and disappears when unmarked | UI test + device |
 | 5.4 | The local choice survives app restart | Restart test |
 | 5.5 | A server refresh does not silently overwrite a local choice | Repository test |

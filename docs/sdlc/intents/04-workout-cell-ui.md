@@ -8,9 +8,9 @@
 
 | Rung | Outcome | Verified by |
 |---|---|---|
-| 4.1 | A cell shows title and exercise count | Preview + device screenshot |
+| 4.1 | A cell shows title and exercise count | Preview from a `CalendarState` literal + device screenshot |
 | 4.2 | An over-long title truncates with an ellipsis on one line | UI test with a deliberately long title |
-| 4.3 | Status indicator renders per state, with the design's colours | Preview per state + visual comparison |
+| 4.3 | Status indicator renders per state, with the design's colours | Preview per `DisplayStatus` + visual comparison |
 | 4.4 | A day holding multiple workouts stacks them; an empty day renders empty, not broken | Device check against days 4 and 2 of the fixture |
 | 4.5 | During loading, dates show and workout areas show a placeholder | UI test |
 
