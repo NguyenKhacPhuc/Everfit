@@ -1,5 +1,6 @@
 package com.example.everfit.assignment.domain
 
+import com.example.everfit.assignment.data.base.Result
 import com.example.everfit.assignment.domain.model.WorkoutAssignment
 import kotlinx.coroutines.flow.Flow
 

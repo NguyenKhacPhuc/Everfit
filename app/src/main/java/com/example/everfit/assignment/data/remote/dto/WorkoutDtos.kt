@@ -11,12 +11,10 @@ import kotlinx.serialization.Serializable
  *
  * Note the payload carries no dates at all — only `day: 0..6`, which
  * WeekProvider maps onto the current Monday–Sunday week.
+ *
+ * The outer `{"data": [...]}` envelope is BaseResponse<List<DayDto>>, so there is
+ * no bespoke response wrapper here.
  */
-@Serializable
-data class WorkoutsResponseDto(
-    val data: List<DayDto> = emptyList(),
-)
-
 @Serializable
 data class DayDto(
     @SerialName("_id") val id: String,

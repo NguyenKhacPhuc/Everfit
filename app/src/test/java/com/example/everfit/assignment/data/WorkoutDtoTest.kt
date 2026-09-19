@@ -1,6 +1,7 @@
 package com.example.everfit.assignment.data
 
-import com.example.everfit.assignment.data.remote.dto.WorkoutsResponseDto
+import com.example.everfit.assignment.data.network.BaseResponse
+import com.example.everfit.assignment.data.remote.dto.DayDto
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,11 +20,12 @@ class WorkoutDtoTest {
         .getResourceAsStream("workouts.json")!!
         .bufferedReader().readText()
 
-    private fun parsed() = json.decodeFromString<WorkoutsResponseDto>(fixture())
+    private fun parsed(): List<DayDto> =
+        json.decodeFromString<BaseResponse<List<DayDto>>>(fixture()).data!!
 
     @Test
     fun `the fixture parses into seven days indexed zero through six`() {
-        val days = parsed().data
+        val days = parsed()
 
         assertEquals(7, days.size)
         assertEquals((0..6).toList(), days.map { it.day })
@@ -31,7 +33,7 @@ class WorkoutDtoTest {
 
     @Test
     fun `wire names are mapped to Kotlin names`() {
-        val first = parsed().data.first().assignments.single()
+        val first = parsed().first().assignments.single()
 
         assertEquals("68c0a1f45b9d4a0017c8e200", first.id)
         assertEquals("Legs day", first.title)
@@ -42,7 +44,7 @@ class WorkoutDtoTest {
     /** The fixture exercises both awkward shapes without inventing data. */
     @Test
     fun `days may hold zero or several assignments`() {
-        val byDay = parsed().data.associateBy { it.day }
+        val byDay = parsed().associateBy { it.day }
 
         assertTrue(byDay.getValue(2).assignments.isEmpty(), "day 2 should be empty")
         assertTrue(byDay.getValue(5).assignments.isEmpty(), "day 5 should be empty")
@@ -51,7 +53,7 @@ class WorkoutDtoTest {
 
     @Test
     fun `the fixture holds six assignments in total`() {
-        assertEquals(6, parsed().data.sumOf { it.assignments.size })
+        assertEquals(6, parsed().sumOf { it.assignments.size })
     }
 
     /** A new server field must not be fatal. */
@@ -63,7 +65,7 @@ class WorkoutDtoTest {
                               "total_exercise":3,"another":"x"}]}]}
         """.trimIndent()
 
-        val day = json.decodeFromString<WorkoutsResponseDto>(withExtra).data.single()
+        val day = json.decodeFromString<BaseResponse<List<DayDto>>>(withExtra).data!!.single()
 
         assertEquals("T", day.assignments.single().title)
     }
@@ -71,7 +73,7 @@ class WorkoutDtoTest {
     @Test
     fun `a malformed body fails rather than producing empty data`() {
         assertFailsWith<Exception> {
-            json.decodeFromString<WorkoutsResponseDto>("""{"data":[{"day":"not a number"}]}""")
+            json.decodeFromString<BaseResponse<List<DayDto>>>("""{"data":[{"day":"not a number"}]}""")
         }
     }
 }
