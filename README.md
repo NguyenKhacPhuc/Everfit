@@ -161,7 +161,7 @@ AI drafted non-trivial logic — the week/date maths, the SQL merge — there is
 comment in the code saying so and what I changed. I can explain every file in
 this repository.
 
-## End-to-end process (bonus)
+## End-to-end process
 
 What I actually do when a feature request arrives, and what I did here:
 
