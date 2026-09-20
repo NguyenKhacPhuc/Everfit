@@ -20,21 +20,12 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
-/**
- * Builds a [Result] from things only the data layer knows about: HTTP responses,
- * transport exceptions, serialization failures.
- *
- * These live here rather than beside the Result type so that `core` — and
- * therefore `domain` and `feature` — never inherits a dependency on Ktor.
- */
 suspend fun Exception?.toResult(): Result.Error {
     return try {
         when (this) {
             is ClientRequestException, is ServerResponseException -> {
                 val error = JsonHelper.toObject<ErrorModel>(this.response.bodyAsText())
                 if (null == error) {
-                    // Keep the HTTP status rather than collapsing to UNKNOWN: a
-                    // 500 with a non-JSON body still tells the caller something.
                     Result.Error(this.response.status.value, "", this)
                 } else {
                     Result.Error(error.code, error.message, this)
@@ -61,15 +52,6 @@ suspend fun Exception?.toResult(): Result.Error {
     }
 }
 
-suspend inline fun <reified T> HttpResponse.toResultOrNothing(): Result<Boolean> {
-    return if (this.status.value in 200..299) {
-        this.body<BaseResponse<T>>()
-        Result.Success(true)
-    } else {
-        Result.Error(this.status.value, this.bodyAsText())
-    }
-}
-
 suspend inline fun <reified T> HttpResponse.toResult(): Result<T> {
     return if (this.status.value in 200..299) {
         val objectData = this.body<BaseResponse<T>>()
@@ -87,19 +69,6 @@ inline fun <reified T> Flow<T>.asResult(): Flow<Result<T>> {
             it.logAsNonFatal()
             emit((it as? Exception ?: Exception()).toResult())
         }
-}
-
-/**
- * Record a non-HTTP exception for debugging.
- *
- * ADAPTED: the reference implementation reports to Firebase Crashlytics. Firebase
- * is not configured here (it needs a google-services.json), so reporting goes
- * through [CrashReporter]. Swapping in Crashlytics means changing that one
- * object, not these call sites.
- */
-fun Exception.logAsNonFatal() {
-    printStackTrace()
-    CrashReporter.recordException(this)
 }
 
 fun Throwable.logAsNonFatal() {

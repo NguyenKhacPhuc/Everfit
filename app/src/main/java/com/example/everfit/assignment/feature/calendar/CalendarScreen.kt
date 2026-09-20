@@ -31,10 +31,6 @@ import kotlinx.coroutines.delay
 import com.example.everfit.assignment.core.ui.theme.EverfitTheme
 import java.time.LocalDate
 
-/**
- * Stateless: state in, intents out. It never sees a ViewModel, which is what
- * makes every state below previewable with no database, network or coroutine.
- */
 @Composable
 fun CalendarScreen(
     state: CalendarState,
