@@ -18,12 +18,6 @@ import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
-/**
- * One day of the week: its label on the left, its workouts on the right.
- *
- * Layout confirmed against docs/design/training.png — seven rows, not seven
- * columns, because a day holds multiple workout cards.
- */
 @Composable
 fun DayCell(
     date: LocalDate,
@@ -58,15 +52,6 @@ fun DayCell(
     }
 }
 
-/**
- * Day-of-week above day-of-month, per the brief.
- *
- * Today is the accent colour applied to the **text**, not a filled background —
- * an earlier version used a filled pill, which the design does not do.
- *
- * Locale is pinned to English so labels stay MON/TUE and screenshot checks are
- * deterministic; a localised app would read this from the configuration.
- */
 @Composable
 private fun DayLabel(date: LocalDate, isToday: Boolean) {
     Column(
@@ -83,8 +68,6 @@ private fun DayLabel(date: LocalDate, isToday: Boolean) {
         )
         Text(
             text = date.dayOfMonth.toString(),
-            // bodyLarge, not titleMedium: the day number is 16sp/400 per the
-            // design, while the card title at the same size is bold.
             style = MaterialTheme.typography.bodyLarge,
             color = if (isToday) EverfitTheme.colors.accent
             else EverfitTheme.colors.textPrimary,

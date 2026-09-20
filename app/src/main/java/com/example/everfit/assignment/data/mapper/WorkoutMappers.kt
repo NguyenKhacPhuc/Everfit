@@ -6,12 +6,6 @@ import com.example.everfit.assignment.data.remote.dto.DayDto
 import com.example.everfit.assignment.core.model.StoredStatus
 import com.example.everfit.assignment.core.model.WorkoutAssignment
 
-/**
- * Wire -> domain. One direction, at the boundary it crosses.
- *
- * Flattens the nested day/assignment shape by carrying the day index onto each
- * assignment, so callers work with a flat list and group it as the UI needs.
- */
 fun List<DayDto>.toDomain(): List<WorkoutAssignment> =
     flatMap { day ->
         day.assignments.map { assignment ->

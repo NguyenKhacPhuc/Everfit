@@ -20,13 +20,6 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-/**
- * The whole graph. Plain Koin DSL, deliberately not Koin Annotations — those
- * reintroduce the KSP step that Room already makes us pay for once.
- *
- * Clock and the IO dispatcher are bindings purely so tests can replace them.
- * Inlining either would make the domain rules untestable.
- */
 val appModule = module {
     single { EverfitDatabase.build(androidContext()) }
     single { get<EverfitDatabase>().workoutDao() }
@@ -34,9 +27,6 @@ val appModule = module {
 
     single {
         HttpClient(OkHttp) {
-            // Required by the safeApiCall/asResult idiom: Ktor must throw on a
-            // non-2xx so Exception.toResult() can type it. Without this a 500
-            // body reaches the deserializer and surfaces as a parsing failure.
             expectSuccess = true
             install(ContentNegotiation) { json(JsonHelper.json) }
         }
@@ -60,9 +50,4 @@ val appModule = module {
 }
 
 const val IO_DISPATCHER = "io"
-
-/**
- * The brief lists two endpoints. The one in its Technical Requirements
- * (demo6732818.mockable.io) is unreachable; this one, from the Overview, is live.
- */
 private const val WORKOUTS_ENDPOINT = "https://mock.internalef.com/workouts"

@@ -27,8 +27,6 @@ class MainActivity : ComponentActivity() {
                 val state by viewModel.state.collectAsStateWithLifecycle()
                 val snackbarHostState = remember { SnackbarHostState() }
 
-                // Effects are one-shot: collected here, never held in state, so a
-                // rotation does not replay them.
                 LaunchedEffect(viewModel) {
                     viewModel.effects.collect { effect ->
                         when (effect) {

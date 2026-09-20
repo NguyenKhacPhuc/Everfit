@@ -16,10 +16,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
-/**
- * Pipelines only. Note what is not in scope: any mutable state. This class
- * physically cannot write to the state — it can only send results into the queue.
- */
 class CalendarViewModel(
     private val repository: WorkoutRepository,
     weekProvider: WeekProvider,
@@ -34,11 +30,6 @@ class CalendarViewModel(
         wireToggle()
     }
 
-    /**
-     * A standing observation of the local store, not a triggered request — so it
-     * needs no flattening operator. A toggle returns through here too, which is
-     * why it produces no result of its own.
-     */
     private fun wireCache() {
         repository.observeWeek()
             .map { assignments ->
@@ -76,11 +67,6 @@ class CalendarViewModel(
             .pipeToState()
     }
 
-    /**
-     * flatMapConcat: two toggles on different workouts are independent facts, and
-     * neither may cancel the other. flatMapLatest would silently drop the first —
-     * visible only under fast tapping, never in a demo.
-     */
     private fun wireToggle() {
         intents.filterIsInstance<CalendarIntent.ToggleCompletion>()
             .flatMapConcat { intent ->
@@ -89,11 +75,6 @@ class CalendarViewModel(
             .pipeToState()
     }
 
-    /**
-     * A full-screen error is state; a failed refresh over usable content is a
-     * one-shot. Deciding this here, with `after` in hand, is why effectFor takes
-     * the resulting state rather than only the result.
-     */
     override fun effectFor(
         result: CalendarResult,
         before: CalendarState,
@@ -106,11 +87,6 @@ class CalendarViewModel(
     }
 }
 
-/**
- * Seven day rows exist from the very first frame, each with no workouts. That is
- * the brief's loading requirement — correct dates, empty data — satisfied by the
- * initial state rather than by a branch in the screen.
- */
 private fun initialState(weekProvider: WeekProvider): CalendarState {
     val week = weekProvider.currentWeek()
     val today = weekProvider.today()

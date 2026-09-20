@@ -4,10 +4,6 @@ import androidx.compose.runtime.Immutable
 import com.example.everfit.assignment.core.model.DisplayStatus
 import java.time.LocalDate
 
-/**
- * `days` and `load` are separate fields: a failed refresh over good cache is both
- * content-bearing and errored, which one collapsed hierarchy cannot express.
- */
 @Immutable
 data class CalendarState(
     val weekDates: List<LocalDate> = emptyList(),
@@ -15,16 +11,11 @@ data class CalendarState(
     val days: List<DayUiModel> = emptyList(),
     val load: Load = Load.Idle,
 ) {
-    /** Derived, never stored. */
     val showsFullScreenError: Boolean
         get() = load is Load.Failed && days.all { it.workouts.isEmpty() }
 
     val isRefreshing: Boolean get() = load is Load.Refreshing
 
-    /**
-     * Cold start only. Derived, so a background refresh over content is false
-     * (days populated) and a genuinely empty week is false (load settled).
-     */
     val showsLoadingPlaceholders: Boolean
         get() = isRefreshing && days.all { it.workouts.isEmpty() }
 }
@@ -50,11 +41,7 @@ data class WorkoutUiModel(
     val totalExercises: Int,
     val displayStatus: DisplayStatus,
 ) {
-
     val showsCheckmark: Boolean get() = displayStatus == DisplayStatus.COMPLETED
-
-
-    val showsExerciseCount: Boolean get() = displayStatus != DisplayStatus.COMPLETED
 }
 
 sealed interface CalendarIntent {
@@ -63,6 +50,5 @@ sealed interface CalendarIntent {
 }
 
 sealed interface CalendarEffect {
-    /** A failed refresh over usable content. A full-screen error is state. */
     data class ShowMessage(val message: String) : CalendarEffect
 }
